@@ -1,0 +1,32 @@
+<div class="pagination">
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+            <li class="page-item" style="color: #ac0e14;">
+                <a class="page-link" href="?page=1&term={{ request.GET.term }}">&laquo;</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{page_obj.previous_page_number}}&term={{ request.GET.term }}">&lsaquo;</a>
+            </li>
+        {% endif %}
+
+        {% for page in page_obj.paginator.page_range %}
+            {%if page_obj.number == page%}
+                <li class="page-item active">
+                    <a class="page-link" href="?page={{page}}&term={{ request.GET.term }}">{{page}}</a>
+                </li>
+            {%elif page > page_obj.number|add:'-3' and page < page_obj.number|add:'3'%}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{page}}&term={{ request.GET.term }}">{{page}}</a>
+                </li>
+            {%endif%}
+        {%endfor%}
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}&term={{ request.GET.term }}">&rsaquo;</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&term={{ request.GET.term }}">&raquo;</a>
+            </li>
+        {% endif %}
+    </ul>
+</div>

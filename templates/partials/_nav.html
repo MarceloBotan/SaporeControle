@@ -1,0 +1,97 @@
+{% load static %}
+
+<style>
+    .dropdown-submenu{
+        position: relative;
+    }
+    .dropdown-submenu a::after{
+        transform: rotate(-90deg);
+        position: absolute;
+        right: 3px;
+        top: 40%;
+    }
+    .dropdown-submenu:hover .dropdown-menu, .dropdown-submenu:focus .dropdown-menu{
+        display: flex;
+        flex-direction: column;
+        position: absolute !important;
+        margin-top: -30px;
+        left: 100%;
+    }
+
+    /*@media (max-width: 992px) {
+        .dropdown-menu{
+            width: 50%;
+        }
+        .dropdown-menu .dropdown-submenu{
+            width: auto;
+        }
+    }*/
+</style>
+
+<nav class="navbar navbar-expand-lg navbar-dark static-top" style="background-color: #ac0e14;">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'img/logo_sapore.png' %}" 
+                    style="width: 102px; height: 30px;" alt="">
+        </a>
+        {% if 'accounts' not in request.path %}
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Suporte Sede
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                        <a class="dropdown-item" href="{% url 'dashboard' %}">Inventário</a>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Impressoras
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                        <a class="dropdown-item" href="{% url 'dashboard' %}">Inventário</a>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Telecom
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                                Móvel
+                            </a>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                                <a class="dropdown-item" href="{% url 'line_list' %}">Linhas</a>
+                                <a class="dropdown-item" href="{% url 'smartphone_list' %}">Smartphones</a>
+                                <a class="dropdown-item" href="{% url 'vivobox_list' %}">VivoBox</a>
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                                Fixa
+                            </a>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                                <a class="dropdown-item" href="{% url 'line_list' %}">Contratos</a>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a class="nav-link" href="{% url 'logout' %}">Sair</a>
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+</nav>
+

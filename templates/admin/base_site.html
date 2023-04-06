@@ -1,0 +1,15 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block title %}Administração | Sapore{% endblock %}
+
+{% block branding %}
+    <h1 id="head">
+        <img src="{% static 'img/logo_sapore.png' %}" 
+             style="width: 102px; height: 30px;"> Administração
+    </h1>
+{%endblock%}
+
+{%block extrastyle%}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{%endblock%}
