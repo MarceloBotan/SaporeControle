@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'LDFComicSans';
+    src: local('LDFComicSans'),
+        url('{% static 'fonts/LDFComicSans.otf' %} format("truetype")');
+}
+
+*{
+    font-family:'Aileron';
+}
