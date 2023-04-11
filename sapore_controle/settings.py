@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-((r961v2)2j@7)^*(u47j#vaik*z6gec#fy_*3mnfqo9nv10&@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['10.215.0.85', 'localhost']
+ALLOWED_HOSTS = ['10.0.2.15', 'localhost']
 
 
 # Application definition
@@ -85,7 +85,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sapore_controle',
-        'USER': 'sis_django_sapore',
+        'USER': 'django',
         'PASSWORD': 'Sup@rte1659!',
         'HOST': 'localhost',
         'PORT': '3306',
