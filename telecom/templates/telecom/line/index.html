@@ -98,8 +98,6 @@
         <thead>
             <tr>
                 <th><label scope="col">Linha</label></th>
-                <th><label scope="col">Operadora</label></th>
-                <th><label scope="col">Plano</label></th>
                 <th><label scope="col">Nome</label></th>
                 <th><label scope="col">Filial</label></th>
                 <th><label scope="col">Status</label></th>
@@ -109,8 +107,6 @@
             {% for line in lines %}
                 <tr>
                     <td><a href="{% url 'line_details' line.id %}">{{line.number}}</a></td>
-                    <td>{{line.telecom}}</td>
-                    <td>{{line.plan}}</td>
                     <td>{{line.name}}</td>
                     <td>{{line.branch}}</td>
                     <td>{{line.status}}</td>

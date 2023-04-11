@@ -431,6 +431,8 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 
         if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
             line.action = 'MAPEAR'
+        elif line.name_mapped and line.branch_mapped and line.action == 'MAPEAR':
+            line.action = 'OK'
 
         if self.request.POST.get('auth_attachment-clear') == 'on':
             os.remove(MEDIA_ROOT / line.auth_attachment.name)
