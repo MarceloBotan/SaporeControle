@@ -86,9 +86,8 @@
         <thead>
             <tr>
                 <th><label class="mb-2">Modelo</label></th>
-                <th><label class="mb-2">Nome</label></th>
                 <th><label class="mb-2">IMEI</label></th>
-                <th><label class="mb-2">Número</label></th>
+                <th><label class="mb-2">Nome</label></th>
                 <th><label class="mb-2">Filial</label></th>
                 <th><label class="mb-2">Status</label></th>
             </tr>
@@ -96,10 +95,9 @@
         <tbody>
             {% for vivobox in vivoboxs %}
                 <tr>
-                    <td><a href="{% url 'vivobox_details' vivobox.id %}">{{vivobox.v_model}}</a></td>
+                    <td>{{vivobox.v_model}}</td>
+                    <td><a href="{% url 'vivobox_details' vivobox.id %}">{{vivobox.imei_1}}</a></td>
                     <td>{{vivobox.name}}</td>
-                    <td>{{vivobox.imei_1}}</td>
-                    <td>{{vivobox.number}}</td>
                     <td>{{vivobox.branch}}</td>
                     <td>{{vivobox.status}}</td>
                 </tr>

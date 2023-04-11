@@ -97,6 +97,7 @@
     <table class="table mb-2">
         <thead>
             <tr>
+                <th><label scope="col">Operadora</label></th>
                 <th><label scope="col">Linha</label></th>
                 <th><label scope="col">Nome</label></th>
                 <th><label scope="col">Filial</label></th>
@@ -106,6 +107,7 @@
         <tbody>
             {% for line in lines %}
                 <tr>
+                    <td>{{line.telecom}}</td>
                     <td><a href="{% url 'line_details' line.id %}">{{line.number}}</a></td>
                     <td>{{line.name}}</td>
                     <td>{{line.branch}}</td>

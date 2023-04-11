@@ -14,23 +14,25 @@
         <div class="col">
             <dt>Usuário</dt>
             <dd>{% if smartphone.name %}{{smartphone.name}}{% else %}-{% endif %}</dd>
-            <dt>Número</dt>
-            <dd>{% if smartphone.number %}{{smartphone.number}}{% else %}-{% endif %}</dd>
             <dt>Filial</dt>
             <dd>{% if smartphone.branch %}{{smartphone.branch}}{% else %}-{% endif %}</dd>
             <dt>Status</dt>
             <dd>{% if smartphone.status %}{{smartphone.status}}{% else %}-{% endif %}</dd>
         </div>
         <div class="col">
-            <dt>IMEI 1</dt>
-            <dd>{% if smartphone.imei_1 %}{{smartphone.imei_1}}{% else %}-{% endif %}</dd>
+            <dt>Número</dt>
+            <dd>{% if smartphone.number %}{{smartphone.number}}{% else %}-{% endif %}</dd>
             <dt>Modelo</dt>
             <dd>{% if smartphone.s_model %}{{smartphone.s_model}}{% else %}-{% endif %}</dd>
-            <dt>Nota Fiscal</dt>
-            <dd>{% if smartphone.receipt %}{{smartphone.receipt}}{% else %}-{% endif %}</dd>
             <dt>Autorização</dt>
             <dd>{% if smartphone.auth_attachment == 'False' or not smartphone.auth_attachment %}-
                 {% else %}<a href="/media/{{smartphone.auth_attachment}}">Arquivo</a>{% endif %}</dd>
+        </div>
+        <div class="col">
+            <dt>IMEI 1</dt>
+            <dd>{% if smartphone.imei_1 %}{{smartphone.imei_1}}{% else %}-{% endif %}</dd>
+            <dt>Nota Fiscal</dt>
+            <dd>{% if smartphone.receipt %}{{smartphone.receipt}}{% else %}-{% endif %}</dd>
         </div>
         <div class="col">
             <dt>IMEI 2</dt>

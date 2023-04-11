@@ -86,9 +86,8 @@
         <thead>
             <tr>
                 <th><label class="mb-2">Modelo</label></th>
-                <th><label class="mb-2">Nome</label></th>
                 <th><label class="mb-2">IMEI</label></th>
-                <th><label class="mb-2">Número</label></th>
+                <th><label class="mb-2">Nome</label></th>
                 <th><label class="mb-2">Filial</label></th>
                 <th><label class="mb-2">Status</label></th>
             </tr>
@@ -96,10 +95,9 @@
         <tbody>
             {% for smartphone in smartphones %}
                 <tr>
-                    <td><a href="{% url 'smartphone_details' smartphone.id %}">{{smartphone.s_model}}</a></td>
+                    <td>{{smartphone.s_model}}</td>
+                    <td><a href="{% url 'smartphone_details' smartphone.id %}">{{smartphone.imei_1}}</a></td>
                     <td>{{smartphone.name}}</td>
-                    <td>{{smartphone.imei_1}}</td>
-                    <td>{{smartphone.number}}</td>
                     <td>{{smartphone.branch}}</td>
                     <td>{{smartphone.status}}</td>
                 </tr>

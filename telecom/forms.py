@@ -1,5 +1,7 @@
 from django.forms import ModelForm
 from .models import Line, Smartphone, VivoBox, Branch
+from telecom import models
+
 
 def validator_line(self, data):
     name = data.get('name')
@@ -151,10 +153,10 @@ def validator_smartphone(self, data):
             line = Line.objects.get(number=number)
 
             #Verifica o plano da linha
-            if line.plan != 'SMART':
+            if models.LINE_PLAN_TYPES[line.plan] != 'VOZ':
                 self.add_error(
                     'number',
-                    'Plano da linha não é Smart'
+                    'Plano da linha não é de Voz'
                 )
     
             #Verifica se a linha já possui colaborador associado
@@ -282,11 +284,11 @@ def validator_vivobox(self, data):
             line = Line.objects.get(number=number)
 
             #Verifica o plano da linha
-            if line.plan != 'BOX':
-                self.add_error(
-                    'number',
-                    'Plano da linha não é Box'
-                )
+            #if line.plan != 'BOX':
+            #    self.add_error(
+            #        'number',
+            #        'Plano da linha não é Box'
+            #    )
     
             #Verifica se a linha já possui colaborador associado
             if (line.name != '-' and line.name != name) or (line.branch and line.branch != branch):

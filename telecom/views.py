@@ -482,6 +482,8 @@ class LineAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 
         if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
             line.action = 'MAPEAR'
+        elif line.name_mapped and line.branch_mapped and line.action == 'MAPEAR':
+            line.action = 'OK'
 
         line.save()
 
@@ -510,7 +512,7 @@ class SmartphoneList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        qs = qs.order_by('s_model', 'branch', 'name', '-id')
+        qs = qs.order_by('s_model', 'imei_1', '-id')
 
         return qs
     
@@ -620,8 +622,6 @@ class SmartphoneEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         smartphone.status = form.cleaned_data['status']
         smartphone.date_update = timezone.now()
 
-        print(form.cleaned_data)
-
         if self.request.POST.get('auth_attachment-clear') == 'on':
             os.remove(MEDIA_ROOT / smartphone.auth_attachment.name)
             smartphone.auth_attachment = None
@@ -718,7 +718,7 @@ class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        qs = qs.order_by('v_model', 'branch', 'name', '-id')
+        qs = qs.order_by('v_model', 'imei_1', '-id')
 
         return qs
     
@@ -824,6 +824,15 @@ class VivoBoxEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         vivobox.branch = form.cleaned_data['branch']
         vivobox.status = form.cleaned_data['status']
         vivobox.date_update = timezone.now()
+
+        if self.request.POST.get('auth_attachment-clear') == 'on':
+            os.remove(MEDIA_ROOT / vivobox.auth_attachment.name)
+            vivobox.auth_attachment = None
+        elif vivobox.auth_attachment and self.request.FILES:
+            os.remove(MEDIA_ROOT / vivobox.auth_attachment.name)
+            vivobox.auth_attachment = form.cleaned_data['auth_attachment']
+        else:
+            vivobox.auth_attachment = form.cleaned_data['auth_attachment']
 
         #Verifica se já possuia uma linha e altera para disponível
         try:

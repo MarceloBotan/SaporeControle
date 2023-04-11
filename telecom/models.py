@@ -25,6 +25,22 @@ LINE_PLAN_CHOICES = [
     ("VIVO SMART 25GB","Vivo Smart 25GB",),
 ]
 
+LINE_PLAN_TYPES = {
+    "CLARO MAX 2.0": "VOZ",
+    "CLARO ILIMITADO 2GB": "DADOS",
+    "CLARO ILIMITADO 20GB": "DADOS",
+    "TIM DADOS 3GB": "VOZ",
+    "TIM DADOS 6GB": "VOZ",
+    "VIVO MOVEL 120MB": "DADOS",
+    "VIVO BOX 5GB": "DADOS",
+    "VIVO BOX 10GB": "DADOS",
+    "VIVO SMART 0,5GB": "VOZ",
+    "VIVO SMART 2GB": "VOZ",
+    "VIVO SMART 5GB": "VOZ",
+    "VIVO SMART 7GB": "VOZ",
+    "VIVO SMART 25GB": "VOZ",
+}
+
 LINE_TELECOM_CHOICES = [
     ("CLARO","Claro",),
     ("TIM","TIM",),
