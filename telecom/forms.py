@@ -18,7 +18,7 @@ def validator_line(self, data):
     try:
         model_branch = Branch.objects.get(branch=branch)
 
-        if model_branch.closed == 'S' and (branch < 1599 or branch > 1999):
+        if model_branch.closed and (branch < 1599 or branch > 1999):
             self.add_error(
                 'branch',
                 'Filial encerrada'
@@ -63,7 +63,8 @@ class FormLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'branch', 'status', 'sim_card', 'receipt']
+        fields = ['name', 'branch', 'status', 'sim_card', 'receipt', 'auth_attachment',\
+                   'name_mapped', 'branch_mapped']
 
 #Formulário para adicionar uma nova linha
 class FormAddLine(ModelForm):
@@ -110,7 +111,8 @@ class FormAddLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'telecom', 'plan', 'number', 'sim_card', 'branch', 'status', 'receipt']
+        fields = ['name', 'telecom', 'plan', 'number', 'sim_card','branch', 'status', \
+                  'receipt', 'auth_attachment', 'name_mapped', 'branch_mapped']
 
 def validator_smartphone(self, data):
     name = data.get('name')
@@ -122,7 +124,7 @@ def validator_smartphone(self, data):
     try:
         model_branch = Branch.objects.get(branch=branch)
 
-        if model_branch.closed == 'S' and (branch < 1599 or branch > 1999):
+        if model_branch.closed and (branch < 1599 or branch > 1999):
             self.add_error(
                 'branch',
                 'Filial encerrada'
@@ -203,7 +205,7 @@ class FormSmartphone(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Smartphone
-        fields = ['status', 'name', 'branch', 'number']
+        fields = ['status', 'name', 'branch', 'number', 'auth_attachment']
 
 #Formulário para adicionar um novo smartphone
 class FormAddSmartphone(ModelForm):
@@ -241,7 +243,7 @@ class FormAddSmartphone(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Smartphone
-        fields = ['s_model', 'imei_1', 'imei_2', 'receipt', 'status', 'name', 'branch', 'number']
+        fields = ['s_model', 'imei_1', 'imei_2', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
 
 def validator_vivobox(self, data):
     name = data.get('name')
@@ -253,7 +255,7 @@ def validator_vivobox(self, data):
     try:
         model_branch = Branch.objects.get(branch=branch)
 
-        if model_branch.closed == 'S' and (branch < 1599 or branch > 1999):
+        if model_branch.closed and (branch < 1599 or branch > 1999):
             self.add_error(
                 'branch',
                 'Filial encerrada'
@@ -330,7 +332,7 @@ class FormVivoBox(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = VivoBox
-        fields = ['status', 'name', 'branch', 'number']
+        fields = ['status', 'name', 'branch', 'number', 'auth_attachment']
 
 #Formulário para adicionar um novo VivoBox
 class FormAddVivoBox(ModelForm):
@@ -368,5 +370,5 @@ class FormAddVivoBox(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = VivoBox
-        fields = ['v_model', 'imei_1', 'receipt', 'status', 'name', 'branch', 'number']
+        fields = ['v_model', 'imei_1', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
 

@@ -28,6 +28,9 @@
             <dd>{% if vivobox.s_model %}{{vivobox.s_model}}{% else %}-{% endif %}</dd>
             <dt>Nota Fiscal</dt>
             <dd>{% if vivobox.receipt %}{{vivobox.receipt}}{% else %}-{% endif %}</dd>
+            <dt>Autorização</dt>
+            <dd>{% if vivobox.auth_attachment == 'False' or not vivobox.auth_attachment %}-
+                {% else %}<a href="/media/{{vivobox.auth_attachment}}">Arquivo</a>{% endif %}</dd>
         </div>
         <div class="col">
             <dt>IMEI 2</dt>

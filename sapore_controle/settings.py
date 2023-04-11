@@ -35,6 +35,8 @@ ALLOWED_HOSTS = ['10.215.0.85', 'localhost']
 INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'telecom.apps.TelecomConfig',
+    'support.apps.SupportConfig',
+    'printers.apps.PrintersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

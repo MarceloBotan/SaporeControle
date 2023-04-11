@@ -28,6 +28,9 @@
             <dd>{% if smartphone.s_model %}{{smartphone.s_model}}{% else %}-{% endif %}</dd>
             <dt>Nota Fiscal</dt>
             <dd>{% if smartphone.receipt %}{{smartphone.receipt}}{% else %}-{% endif %}</dd>
+            <dt>Autorização</dt>
+            <dd>{% if smartphone.auth_attachment == 'False' or not smartphone.auth_attachment %}-
+                {% else %}<a href="/media/{{smartphone.auth_attachment}}">Arquivo</a>{% endif %}</dd>
         </div>
         <div class="col">
             <dt>IMEI 2</dt>

@@ -10,7 +10,9 @@ from django.utils import timezone
 from .forms import FormLine, FormAddLine, FormSmartphone, FormAddSmartphone, FormVivoBox, FormAddVivoBox
 from .models import Line, Smartphone, VivoBox
 from itertools import chain
+from sapore_controle.settings import MEDIA_ROOT
 import csv
+import os
 
 class Echo:
     def write(self, value):
@@ -423,6 +425,17 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
             line.sim_card_old = line.sim_card
         line.sim_card = form.cleaned_data['sim_card']
         line.receipt = form.cleaned_data['receipt']
+        line.name_mapped = form.cleaned_data['name_mapped']
+        line.branch_mapped = form.cleaned_data['branch_mapped']
+
+        if self.request.POST.get('auth_attachment-clear') == 'on':
+            line.auth_attachment = None
+        elif line.auth_attachment and self.request.FILES:
+            os.remove(MEDIA_ROOT / line.auth_attachment.name)
+            line.auth_attachment = form.cleaned_data['auth_attachment']
+        else:
+            line.auth_attachment = form.cleaned_data['auth_attachment']
+
         line.save()
 
         try:
@@ -440,9 +453,8 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
                 vivobox.save()
             except:
                 pass
-
         return redirect('line_details', pk=line.id)
-
+        
 class LineAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     model = Line
     #Caminho do arquivo html
@@ -463,7 +475,6 @@ class LineAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         line.save()
 
         return redirect('line_list')
-
 
 ##############
 # Smartphone #
@@ -584,6 +595,9 @@ class SmartphoneEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     #Formulário para editar a linha
     form_class = FormSmartphone
 
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
     #Permissão para acessar a página
     permission_required = 'telecom.change_smartphone'
 
@@ -594,6 +608,17 @@ class SmartphoneEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         smartphone.branch = form.cleaned_data['branch']
         smartphone.status = form.cleaned_data['status']
         smartphone.date_update = timezone.now()
+
+        print(form.cleaned_data)
+
+        if self.request.POST.get('auth_attachment-clear') == 'on':
+            os.remove(MEDIA_ROOT / smartphone.auth_attachment.name)
+            smartphone.auth_attachment = None
+        elif smartphone.auth_attachment and self.request.FILES:
+            os.remove(MEDIA_ROOT / smartphone.auth_attachment.name)
+            smartphone.auth_attachment = form.cleaned_data['auth_attachment']
+        else:
+            smartphone.auth_attachment = form.cleaned_data['auth_attachment']
 
         #Verifica se já possuia uma linha e altera para disponível
         try:

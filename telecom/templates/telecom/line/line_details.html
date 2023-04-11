@@ -29,6 +29,9 @@
             <dd>{% if line.sim_card %}{{line.sim_card}}{% else %}-{% endif %}</dd>
             <dt>Nota Fiscal</dt>
             <dd>{% if line.receipt %}{{line.receipt}}{% else %}-{% endif %}</dd>
+            <dt>Autorização</dt>
+            <dd>{% if line.auth_attachment == 'False' or not line.auth_attachment %}-
+                {% else %}<a href="/media/{{line.auth_attachment}}">Arquivo</a>{% endif %}</dd>
         </div>
         <div class="col">
             <dt>Plano</dt>
@@ -37,6 +40,12 @@
             <dd>{% if line.sim_card_old %}{{line.sim_card_old}}{% else %}-{% endif %}</dd>
             <dt>Data da Última Atualização</dt>
             <dd>{% if line.date_update %}{{line.date_update|date:'d/m/Y'}}{% else %}-{% endif %}</dd>
+            <dt>Nome Mapeado</dt>
+            <dd>{% if line.name_mapped %}Sim
+                {% else %}Não{% endif %}</dd>
+            <dt>CR Mapeado</dt>
+            <dd>{% if line.branch_mapped %}Sim
+                {% else %}Não{% endif %}</dd>
         </div>
     </div>
 </div>

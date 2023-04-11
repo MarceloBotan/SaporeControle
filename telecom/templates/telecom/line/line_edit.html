@@ -9,7 +9,7 @@
     </svg> Voltar</a>
 </div>
 <h1 class="mt-1">Editar Linha - {{line.number}}</h1>
-<form method="post" class="form-group">
+<form method="post" class="form-group" enctype="multipart/form-data">
     {% csrf_token %}
     {% include 'partials/_messages.html' %}
     <table class="table">
