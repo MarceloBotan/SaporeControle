@@ -126,3 +126,7 @@ dmypy.json
 # local_settings
 .local_settings.py
 local_settings.py
+
+# media
+.media
+media/

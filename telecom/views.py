@@ -427,6 +427,10 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         line.receipt = form.cleaned_data['receipt']
         line.name_mapped = form.cleaned_data['name_mapped']
         line.branch_mapped = form.cleaned_data['branch_mapped']
+        line.action = form.cleaned_data['action']
+
+        if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
+            line.action = 'MAPEAR'
 
         if self.request.POST.get('auth_attachment-clear') == 'on':
             line.auth_attachment = None
@@ -472,6 +476,10 @@ class LineAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         line = Line(**form.cleaned_data)
+
+        if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
+            line.action = 'MAPEAR'
+
         line.save()
 
         return redirect('line_list')

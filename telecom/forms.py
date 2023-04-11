@@ -6,7 +6,9 @@ def validator_line(self, data):
     sim_card = data.get('sim_card')
     status = data.get('status')
     branch = data.get('branch')
-    
+    name_mapped = data.get('name_mapped')
+    branch_mapped = data.get('branch_mapped')
+
     #Verifica campo Status
     if status == '-':
         self.add_error(
@@ -32,14 +34,14 @@ def validator_line(self, data):
 
     if status == 'ATIVO' or status == 'AGUARDANDO ENDERECO' or status == 'ATUALIZADO' or status == 'VIP':
         #Valida nome
-        if name == '-':
+        if name == '-' and name_mapped:
             self.add_error(
                 'name',
                 'Preencha o campo Nome'
             )
         
         #Verifica se Filial foi digitada
-        if branch == 0:
+        if branch == 0 and branch_mapped:
             self.add_error(
                 'branch',
                 'Preencha o campo Filial'
@@ -63,7 +65,7 @@ class FormLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'branch', 'status', 'sim_card', 'receipt', 'auth_attachment',\
+        fields = ['name', 'branch', 'status', 'action', 'sim_card', 'receipt', 'auth_attachment',\
                    'name_mapped', 'branch_mapped']
 
 #Formulário para adicionar uma nova linha
@@ -111,7 +113,7 @@ class FormAddLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'telecom', 'plan', 'number', 'sim_card','branch', 'status', \
+        fields = ['name', 'telecom', 'plan', 'number', 'sim_card','branch', 'status', 'action', \
                   'receipt', 'auth_attachment', 'name_mapped', 'branch_mapped']
 
 def validator_smartphone(self, data):

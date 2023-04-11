@@ -15,14 +15,14 @@ LINE_PLAN_CHOICES = [
     ("CLARO ILIMITADO 20GB","Claro Ilimitado 20GB",),
     ("TIM DADOS 3GB","TIM Dados 3GB",),
     ("TIM DADOS 6GB","TIM Dados 6GB",),
-    ("VIVO BOX 10GB","Vivo Box 10GB",),
-    ("VIVO BOX 5GB","Vivo Box 5GB",),
     ("VIVO MOVEL 120MB","Vivo Móvel 120MB",),
+    ("VIVO BOX 5GB","Vivo Box 5GB",),
+    ("VIVO BOX 10GB","Vivo Box 10GB",),
     ("VIVO SMART 0,5GB","Vivo Smart 0,5GB",),
-    ("VIVO SMART 25GB","Vivo Smart 25GB",),
     ("VIVO SMART 2GB","Vivo Smart 2GB",),
     ("VIVO SMART 5GB","Vivo Smart 5GB",),
     ("VIVO SMART 7GB","Vivo Smart 7GB",),
+    ("VIVO SMART 25GB","Vivo Smart 25GB",),
 ]
 
 LINE_TELECOM_CHOICES = [
@@ -33,8 +33,8 @@ LINE_TELECOM_CHOICES = [
 
 LINE_ACTION_CHOICES = [
     ("OK","Ok",),
-    ("CANCELAR EM MAIO","Cancelar em Maio",),
     ("CANCELAR APOS FIDELIDADE","Cancelar Após Fidelidade",),
+    ("CANCELAR EM MAIO","Cancelar em Maio",),
     ("MAPEAR","Mapear",),
 ]
 
