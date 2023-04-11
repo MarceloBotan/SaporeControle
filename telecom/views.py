@@ -433,6 +433,7 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
             line.action = 'MAPEAR'
 
         if self.request.POST.get('auth_attachment-clear') == 'on':
+            os.remove(MEDIA_ROOT / line.auth_attachment.name)
             line.auth_attachment = None
         elif line.auth_attachment and self.request.FILES:
             os.remove(MEDIA_ROOT / line.auth_attachment.name)
