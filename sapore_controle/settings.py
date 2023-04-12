@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['10.215.0.240', 'localhost']
 
 INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
+    'branch.apps.BranchConfig',
     'telecom.apps.TelecomConfig',
     'support.apps.SupportConfig',
     'printers.apps.PrintersConfig',

@@ -1,21 +1,25 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.http import StreamingHttpResponse, HttpResponseForbidden
-from django.db.models import Q, Count
+
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.list import ListView
 from django.views.generic.edit import UpdateView, CreateView
 from django.views.generic import TemplateView
+
 from django.utils import timezone
+
 from .forms import FormLine, FormAddLine, FormSmartphone, FormAddSmartphone, FormVivoBox, FormAddVivoBox
 from .forms import FormUploadFile
+
+from django.db.models import Q, Count
 from .models import Line, Smartphone, VivoBox, Branch, UploadFile
+
 from itertools import chain
-from django.contrib.auth.models import User
 from sapore_controle.settings import MEDIA_ROOT
+import pandas as pd
 import csv
 import os
-import pandas as pd
 
 class Echo:
     def write(self, value):
