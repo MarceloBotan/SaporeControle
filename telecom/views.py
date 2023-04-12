@@ -419,16 +419,19 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         line = self.get_object()
         line.name = form.cleaned_data['name']
-        line.branch = form.cleaned_data['branch']
-        line.status = form.cleaned_data['status']
         if line.sim_card != form.cleaned_data['sim_card']:
             line.sim_card_old = line.sim_card
         line.sim_card = form.cleaned_data['sim_card']
-        line.receipt = form.cleaned_data['receipt']
+        line.branch = form.cleaned_data['branch']
+        line.action = form.cleaned_data['action']
         line.name_mapped = form.cleaned_data['name_mapped']
         line.branch_mapped = form.cleaned_data['branch_mapped']
-        line.action = form.cleaned_data['action']
-
+        line.accountable = form.cleaned_data['accountable']
+        line.status = form.cleaned_data['status']
+        line.status_rfp = form.cleaned_data['status_rfp']
+        line.consumption = form.cleaned_data['consumption']
+        line.vip = form.cleaned_data['vip']
+        
         if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
             line.action = 'MAPEAR'
         elif line.name_mapped and line.branch_mapped and line.action == 'MAPEAR':

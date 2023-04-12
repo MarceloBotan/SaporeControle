@@ -67,8 +67,8 @@ class FormLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'branch', 'status', 'action', 'sim_card', 'receipt', 'auth_attachment',\
-                   'name_mapped', 'branch_mapped']
+        fields = ['name', 'sim_card', 'branch', 'action', 'name_mapped', 'branch_mapped', \
+                  'accountable', 'status', 'status_rfp', 'consumption', 'vip', 'auth_attachment']
 
 #Formulário para adicionar uma nova linha
 class FormAddLine(ModelForm):
@@ -115,8 +115,8 @@ class FormAddLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'telecom', 'plan', 'number', 'sim_card','branch', 'status', 'action', \
-                  'receipt', 'auth_attachment', 'name_mapped', 'branch_mapped']
+        fields = ['name', 'number', 'sim_card', 'telecom', 'plan', 'branch', 'receipt', \
+                   'status', 'vip', 'auth_attachment']
 
 def validator_smartphone(self, data):
     name = data.get('name')

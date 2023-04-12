@@ -21,6 +21,9 @@
             <dd>{% if line.action %}{{line.action}}{% else %}-{% endif %}</dd>
             <dt>Status</dt>
             <dd>{% if line.status %}{{line.status}}{% else %}-{% endif %}</dd>
+            <dt>VIP</dt>
+            <dd>{% if line.vip %}Sim
+                {% else %}Não{% endif %}</dd>
         </div>
         <div class="col">
             <dt>Número</dt>
@@ -30,6 +33,8 @@
             <dt>Nome Mapeado</dt>
             <dd>{% if line.name_mapped %}Sim
                 {% else %}Não{% endif %}</dd>
+            <dt>Status RFP</dt>
+            <dd>{% if line.status_rfp %}{{line.status_rfp}}{% else %}-{% endif %}</dd>
             <dt>Autorização</dt>
             <dd>{% if line.auth_attachment == 'False' or not line.auth_attachment %}-
                 {% else %}<a href="/media/{{line.auth_attachment}}">Arquivo</a>{% endif %}</dd>
@@ -42,12 +47,16 @@
             <dt>CR Mapeado</dt>
             <dd>{% if line.branch_mapped %}Sim
                 {% else %}Não{% endif %}</dd>
+            <dt>Consumo</dt>
+            <dd>{% if line.consumption %}{{line.consumption}}{% else %}-{% endif %}</dd>
         </div>
         <div class="col">
             <dt>SIM card Anterior</dt>
             <dd>{% if line.sim_card_old %}{{line.sim_card_old}}{% else %}-{% endif %}</dd>
             <dt>Nota Fiscal</dt>
             <dd>{% if line.receipt %}{{line.receipt}}{% else %}-{% endif %}</dd>
+            <dt>Responsável</dt>
+            <dd>{% if line.accountable %}{{line.accountable}}{% else %}-{% endif %}</dd>
             <dt>Data da Última Atualização</dt>
             <dd>{% if line.date_update %}{{line.date_update|date:'d/m/Y'}}{% else %}-{% endif %}</dd>
         </div>

@@ -6,7 +6,22 @@ LINE_STATUS_CHOICES = [
     ("BLOQUEADO","Bloqueado",),
     ("CANCELADO","Cancelado",),
     ("DISPONIVEL","Disponível",),
-    ("VIP","VIP",),
+]
+
+LINE_STATUS_RFP_CHOICES = [
+    ("ATIVO","Ativo",),
+    ("ATIVO FORA RFP","Ativo Fora RFP",),
+    ("BLOQUEADO","Bloqueado",),
+    ("BLOQUEADO FORA RFP","Bloqueado Fora RFP",),
+    ("SUSPENSO","Suspenso",),
+    ("SUSPENSO FORA RFP","Suspenso Fora RFP",),
+    ("CANCELADO","Cancelado",),
+]
+
+LINE_ACCOUNTABLE_CHOICES = [
+    ("SAPORE","Sapore",),
+    ("TG","TG",),
+    ("MAPEADO","Mapeado",),
 ]
 
 LINE_PLAN_CHOICES = [
@@ -45,6 +60,14 @@ LINE_TELECOM_CHOICES = [
     ("CLARO","Claro",),
     ("TIM","TIM",),
     ("VIVO","Vivo",),
+]
+
+LINE_CONSUMPTION_CHOICES = [
+    ("COM CONSUMO","Com Consumo",),
+    ("SEM CONSUMO 1 MES","Sem Consumo 1 Mês",),
+    ("SEM CONSUMO 2 MESES","Sem Consumo 2 Meses",),
+    ("SEM CONSUMO 3 MESES","Sem Consumo 3 Meses",),
+    ("SEM CONSUMO 4 MESES","Sem Consumo 4 Meses",),
 ]
 
 LINE_ACTION_CHOICES = [
@@ -108,9 +131,16 @@ class Line(models.Model):
     plan = models.CharField(default='-', max_length=31, choices=LINE_PLAN_CHOICES, verbose_name='Plano')
     telecom = models.CharField(default='-', max_length=15, choices=LINE_TELECOM_CHOICES, verbose_name='Operadora')
     status = models.CharField(max_length=31, default='-', choices=LINE_STATUS_CHOICES, verbose_name='Status')
+    status_rfp = models.CharField(max_length=31, default='-', choices=LINE_STATUS_RFP_CHOICES, \
+                                  verbose_name='Status RFP')
     date_update = models.DateField(default=timezone.now, blank=True)
     branch_closed = models.BooleanField(default=False)
     action = models.CharField(max_length=31, default='OK', choices=LINE_ACTION_CHOICES, verbose_name='Ação')
+    consumption = models.CharField(max_length=63, default='COM CONSUMO', choices=LINE_CONSUMPTION_CHOICES, \
+                                   verbose_name='Consumo')
+    vip = models.BooleanField(default=False, verbose_name='VIP')
+    accountable = models.CharField(max_length=63, default='ATIVO', choices=LINE_ACCOUNTABLE_CHOICES, \
+                                   verbose_name='Responsável')
     name_mapped = models.BooleanField(default=True, verbose_name='Nome Mapeado')
     branch_mapped = models.BooleanField(default=True, verbose_name='CR Mapeado')
     auth_attachment = models.FileField(blank=True, upload_to='line_docs/%Y/%m', verbose_name='Autorização')
@@ -121,9 +151,11 @@ class Smartphone(models.Model):
     number = models.BigIntegerField(default=0, verbose_name='Número')
     imei_1 = models.CharField(max_length=15, default='-', verbose_name='IMEI 1')
     imei_2 = models.CharField(max_length=15, default='-', verbose_name='IMEI 2')
-    s_model = models.CharField(max_length=31, default='-', choices=SMARTPHONE_MODEL_CHOICES, verbose_name='Modelo')
+    s_model = models.CharField(max_length=31, default='-', choices=SMARTPHONE_MODEL_CHOICES, \
+                               verbose_name='Modelo')
     receipt = models.IntegerField(default=0, verbose_name='Nota Fiscal')
-    status = models.CharField(max_length=31, default='-', choices=SMARTPHONE_STATUS_CHOICES, verbose_name='Status')
+    status = models.CharField(max_length=31, default='-', choices=SMARTPHONE_STATUS_CHOICES, \
+                              verbose_name='Status')
     date_update = models.DateField(default=timezone.now, blank=True)
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='smartphone_docs/%Y/%m', verbose_name='Autorização')
