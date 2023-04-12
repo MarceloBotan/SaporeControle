@@ -19,9 +19,9 @@ LINE_STATUS_RFP_CHOICES = [
 ]
 
 LINE_ACCOUNTABLE_CHOICES = [
+    ("MAPEADO","Mapeado",),
     ("SAPORE","Sapore",),
     ("TG","TG",),
-    ("MAPEADO","Mapeado",),
 ]
 
 LINE_PLAN_CHOICES = [
