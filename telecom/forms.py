@@ -1,13 +1,7 @@
 from django.forms import ModelForm
-from .models import Line, Smartphone, VivoBox, Branch, UploadFile
+from .models import Line, Smartphone, VivoBox
+from branch.models import Branch
 from telecom import models
-
-#Formulário para editar uma linha
-class FormUploadFile(ModelForm):
-    #Define os campos a serem alterados
-    class Meta:
-        model = UploadFile
-        fields = ['file']
 
 def validator_line(self, data):
     name = data.get('name')

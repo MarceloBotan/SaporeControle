@@ -171,13 +171,3 @@ class VivoBox(models.Model):
     date_update = models.DateField(default=timezone.now, blank=True)
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='vivobox_docs/%Y/%m', verbose_name='Autorização')
-
-class Branch(models.Model):
-    branch = models.IntegerField(default=0)
-    name = models.CharField(max_length=255, default='-')
-    structure = models.CharField(max_length=31, default='-')
-    closed = models.BooleanField(default=False)
-    regional = models.CharField(max_length=3, default='-')
-
-class UploadFile(models.Model):
-    file = models.FileField(blank=True, upload_to='', verbose_name='Planilha')

@@ -4,12 +4,16 @@ from .models import Branch, UploadFile
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 from .forms import FormUploadFile
+
+from sapore_controle.settings import MEDIA_ROOT
 import pandas as pd
+import os
+
 
 class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = Branch
     #Caminho do arquivo html
-    template_name = 'telecom/branch_list.html'
+    template_name = 'branch/branch_list.html'
     #Número de itens por página
     paginate_by = 20
     #Nome da variável do Model no html
@@ -28,11 +32,11 @@ class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         return qs
 
 class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    model = Branch
+    model = UploadFile
     #Caminho do arquivo html
-    template_name = 'telecom/branch_edit.html'
+    template_name = 'branch/branch_edit.html'
     #Nome da variável do Model no html
-    context_object_name = 'file'
+    context_object_name = 'files'
     #Formulário para editar a linha
     form_class = FormUploadFile
 
@@ -42,7 +46,20 @@ class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     #Permissão para acessar a página
     permission_required = 'telecom.change_branch'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        files = UploadFile.objects.all()
+
+        context['files'] = list(files)
+        return context
+
     def form_valid(self, form):
+        docs_old = UploadFile.objects.all()
+        for doc in docs_old:
+            os.remove(MEDIA_ROOT / doc.file.name)
+        docs_old.delete()
+
         upload_file = UploadFile(**form.cleaned_data)
 
         df = pd.read_excel(upload_file.file, usecols=('B,D,F,I,K'))
@@ -57,5 +74,7 @@ class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
             branch.regional = df_branch[4]
 
             branch.save()
+
+        upload_file.save()
 
         return redirect('branch_list')

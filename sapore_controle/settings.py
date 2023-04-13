@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
+    'hcaptcha',
     'axes',
 ]
 
@@ -164,6 +166,9 @@ AUTHENTICATION_BACKENDS = [
     # Django ModelBackend is the default authentication backend.
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+HCAPTCHA_SITEKEY = '<your sitekey>'
+HCAPTCHA_SECRET = '<your secret key>'
 
 try:
     from .local_settings import *

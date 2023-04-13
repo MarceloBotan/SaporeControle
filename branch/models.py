@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 class Branch(models.Model):
     branch = models.IntegerField(default=0)
@@ -9,3 +10,4 @@ class Branch(models.Model):
 
 class UploadFile(models.Model):
     file = models.FileField(blank=True, upload_to='', verbose_name='Planilha')
+    date_update = models.DateField(default=timezone.now, blank=True)

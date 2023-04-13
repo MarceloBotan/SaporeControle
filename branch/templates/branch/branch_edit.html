@@ -9,6 +9,9 @@
     </svg> Voltar</a>
 </div>
 <h1 class="mt-1">Atualizar Filiais</h1>
+{%for file in files%}
+    Última atualização - {{file.date_update}}
+{%endfor%}
 <form method="post" class="form-group" enctype="multipart/form-data">
     {% csrf_token %}
     {% include 'partials/_messages.html' %}

@@ -4,8 +4,6 @@ from . import views
 urlpatterns = [
     path('', views.Dashboard.as_view(), name='index'),
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
-    path('branch_list/', views.BranchList.as_view(), name='branch_list'),
-    path('branch_edit/', views.BranchEdit.as_view(), name='branch_edit'),
     
     path('generate_csv/<str:telecom_type>/<int:csv_simple>', views.generate_csv, name='generate_csv'),
 
