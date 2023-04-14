@@ -46,11 +46,32 @@
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Parâmetros
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'branch_list' %}">Filiais</a>
-                        <a class="dropdown-item" href="{% url 's_model_list' %}">Modelos Smartphones</a>
-                        <a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos Vivobox</a>
-                        <a class="dropdown-item" href="{% url 'line_plan_list' %}">Planos Linhas</a>
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                                Linhas
+                            </a>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'line_plan_list' %}">Planos</a>
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                                Smartphone
+                            </a>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 's_model_list' %}">Modelos</a>
+                            </ul>
+                        </li>
+                        <li class="dropdown-submenu">
+                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                                Vivobox
+                            </a>
+                            <ul class="dropdown-menu">
+                                <a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos</a>
+                            </ul>
+                        </li>
                     </ul>
                 </li>
                 {%endif%}
@@ -59,7 +80,7 @@
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Suporte Sede
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
                         <a class="dropdown-item" href="{% url 'dashboard' %}">Inventário</a>
                     </ul>
@@ -70,7 +91,7 @@
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Impressoras
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
                         <a class="dropdown-item" href="{% url 'dashboard' %}">Inventário</a>
                     </ul>
@@ -102,7 +123,7 @@
                             <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
                                 Fixa
                             </a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu col-3">
                                 <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
                                 <a class="dropdown-item" href="{% url 'line_list' %}">Contratos</a>
                             </ul>

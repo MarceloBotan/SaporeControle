@@ -345,7 +345,7 @@ class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
 class LinePlanList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = LinePlan
     #Caminho do arquivo html
-    template_name = 'telecom/param/line_plan_list.html'
+    template_name = 'telecom/param/line/plan_list.html'
     #Número de itens por página
     paginate_by = 20
     #Nome da variável do Model no html
@@ -364,7 +364,7 @@ class LinePlanList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
 class LinePlanEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = LinePlan
     #Caminho do arquivo html
-    template_name = 'telecom/param/line_plan_edit.html'
+    template_name = 'telecom/param/line/plan_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
@@ -387,7 +387,7 @@ class LinePlanEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 class LinePlanAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     model = LinePlan
     #Caminho do arquivo html
-    template_name = 'telecom/param/line_plan_add.html'
+    template_name = 'telecom/param/line/plan_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
@@ -414,7 +414,7 @@ class LinePlanAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = SmartModel
     #Caminho do arquivo html
-    template_name = 'telecom/param/s_model_list.html'
+    template_name = 'telecom/param/smartphone/model_list.html'
     #Número de itens por página
     paginate_by = 20
     #Nome da variável do Model no html
@@ -433,7 +433,7 @@ class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
 class SmartModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = SmartModel
     #Caminho do arquivo html
-    template_name = 'telecom/param/s_model_edit.html'
+    template_name = 'telecom/param/smartphone/model_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
@@ -457,7 +457,7 @@ class SmartModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 class SmartModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     model = SmartModel
     #Caminho do arquivo html
-    template_name = 'telecom/param/s_model_add.html'
+    template_name = 'telecom/param/smartphone/model_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
@@ -484,7 +484,7 @@ class SmartModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = BoxModel
     #Caminho do arquivo html
-    template_name = 'telecom/param/v_model_list.html'
+    template_name = 'telecom/param/vivobox/model_list.html'
     #Número de itens por página
     paginate_by = 20
     #Nome da variável do Model no html
@@ -503,7 +503,7 @@ class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
 class BoxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = BoxModel
     #Caminho do arquivo html
-    template_name = 'telecom/param/v_model_edit.html'
+    template_name = 'telecom/param/vivobox/model_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
@@ -524,7 +524,7 @@ class BoxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 class BoxModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     model = BoxModel
     #Caminho do arquivo html
-    template_name = 'telecom/param/v_model_add.html'
+    template_name = 'telecom/param/vivobox/model_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
