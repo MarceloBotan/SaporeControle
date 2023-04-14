@@ -24,42 +24,9 @@ LINE_ACCOUNTABLE_CHOICES = [
     ("SAPORE","Sapore",),
 ]
 
-LINE_PLAN_CHOICES = [
-    ("CLARO MAX 2.0","Claro Max 2.0",),
-    ("CLARO ILIMITADO 2GB","Claro Ilimitado 2GB",),
-    ("CLARO ILIMITADO 20GB","Claro Ilimitado 20GB",),
-    ("TIM DADOS 3GB","TIM Dados 3GB",),
-    ("TIM DADOS 6GB","TIM Dados 6GB",),
-    ("VIVO MOVEL 120MB","Vivo Móvel 120MB",),
-    ("VIVO BOX 5GB","Vivo Box 5GB",),
-    ("VIVO BOX 10GB","Vivo Box 10GB",),
-    ("VIVO SMART 0,5GB","Vivo Smart 0,5GB",),
-    ("VIVO SMART 2GB","Vivo Smart 2GB",),
-    ("VIVO SMART 5GB","Vivo Smart 5GB",),
-    ("VIVO SMART 7GB","Vivo Smart 7GB",),
-    ("VIVO SMART 25GB","Vivo Smart 25GB",),
-]
-
-LINE_PLAN_TYPES = {
-    "CLARO MAX 2.0": "VOZ",
-    "CLARO ILIMITADO 2GB": "DADOS",
-    "CLARO ILIMITADO 20GB": "DADOS",
-    "TIM DADOS 3GB": "VOZ",
-    "TIM DADOS 6GB": "VOZ",
-    "VIVO MOVEL 120MB": "DADOS",
-    "VIVO BOX 5GB": "DADOS",
-    "VIVO BOX 10GB": "DADOS",
-    "VIVO SMART 0,5GB": "VOZ",
-    "VIVO SMART 2GB": "VOZ",
-    "VIVO SMART 5GB": "VOZ",
-    "VIVO SMART 7GB": "VOZ",
-    "VIVO SMART 25GB": "VOZ",
-}
-
-LINE_TELECOM_CHOICES = [
-    ("CLARO","Claro",),
-    ("TIM","TIM",),
-    ("VIVO","Vivo",),
+LINE_PLAN_TYPES = [
+    ("VOZ","Voz",),
+    ("DADOS","Dados",),
 ]
 
 LINE_CONSUMPTION_CHOICES = [
@@ -92,16 +59,6 @@ SMARTPHONE_STATUS_CHOICES = [
     ("QUEBRADO","Quebrado",),
 ]
 
-SMARTPHONE_MODEL_CHOICES = [
-    ("LG K130F","LG K130F",),
-    ("MOTO E4","Moto E4",),
-    ("MOTO G4 Play","Moto G4 Play",),
-    ("MOTO G5S","Moto G5S",),
-    ("MOTO G8 Power Lite","Moto G8 Power Lite",),
-    ("MOTO G20","Moto G20",),
-    ("MOTO G22","Moto G22",),
-]
-
 VIVOBOX_STATUS_CHOICES = [
     ("ESTOQUE","Estoque",),
     ("CONFIGURADO","Configurado",),
@@ -114,13 +71,6 @@ VIVOBOX_STATUS_CHOICES = [
     ("QUEBRADO","Quebrado",),
 ]
 
-VIVOBOX_MODEL_CHOICES = [
-    ("HUAWEI-E173","Huawei-E173",),
-    ("MF253M","MF253M",),
-    ("WLD71-T5","WLD71-T5",),
-    ("BC-4GMCPGa","BC-4GMCPGa",),
-]
-
 class Line(models.Model):
     name = models.CharField(max_length=255, default='-', verbose_name='Nome')
     branch = models.IntegerField(default=0, verbose_name='Filial')
@@ -129,7 +79,7 @@ class Line(models.Model):
     sim_card_old = models.CharField(max_length=20, default='-')
     receipt = models.IntegerField(default=0, verbose_name='Nota Fiscal')
     plan = models.ForeignKey('LinePlan', on_delete=models.DO_NOTHING)
-    telecom = models.CharField(default='-', max_length=15, choices=LINE_TELECOM_CHOICES, verbose_name='Operadora')
+    telecom = models.CharField(default='-', max_length=15)
     status = models.CharField(max_length=31, default='-', choices=LINE_STATUS_CHOICES, verbose_name='Status')
     status_rfp = models.CharField(max_length=31, default='ATIVO', choices=LINE_STATUS_RFP_CHOICES, \
                                   verbose_name='Status RFP')
@@ -147,6 +97,7 @@ class Line(models.Model):
 
 class LinePlan(models.Model):
     name = models.CharField(max_length=31, unique=True, default='-', verbose_name='Plano')
+    plan_type = models.CharField(max_length=15, default='DADOS', choices=LINE_PLAN_TYPES, verbose_name='Tipo')
 
     def __str__(self):
         return self.name

@@ -108,7 +108,7 @@ def generate_csv(request, telecom_type, csv_simple):
 
 @login_required(redirect_field_name='login')
 def delete_model(request, telecom_type, model_id):
-    if 'sapore' not in request.user.groups.get().name:
+    if 'sapore' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
         #Sobre erro 403 - Permissão Negada
         raise PermissionDenied()
 

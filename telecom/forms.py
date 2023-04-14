@@ -21,7 +21,7 @@ class FormLinePlan(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = LinePlan
-        fields = ['name']
+        fields = ['name', 'plan_type']
 
 class FormSmartModel(ModelForm):
     #Validar e alterar os campos do formulário
@@ -202,14 +202,16 @@ def validator_smartphone(self, data):
             'status',
             'Preencha o campo Status'
         )
-
+    
     #Valida Linha
     if number != 0:
         try:
             line = Line.objects.get(number=number)
 
+            line_plan = LinePlan.objects.get(name=line.plan)
+            
             #Verifica o plano da linha
-            if models.LINE_PLAN_TYPES[line.plan] != 'VOZ':
+            if line_plan.plan_type != 'VOZ':
                 self.add_error(
                     'number',
                     'Plano da linha não é de Voz'

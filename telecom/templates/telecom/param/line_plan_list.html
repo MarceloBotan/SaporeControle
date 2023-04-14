@@ -9,11 +9,13 @@
 
 {%block list_th%}
 <th><label scope="col">Plano</label></th>
+<th><label scope="col">Tipo</label></th>
 <th></th>
 {%endblock%}
 
 {%block list_tb%}
 <td>{{object.name}}</td>
+<td>{{object.plan_type}}</td>
 {%endblock%}
 
 {%block list_edit_url%}{% url 'line_plan_edit' object.id %}{%endblock%}
