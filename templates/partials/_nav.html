@@ -54,7 +54,7 @@
                     </ul>
                 </li>
                 {%endif%}
-                {%if 'admin' in user.groups.get.name or user.groups.get.name == 'sapore_supporters' %}
+                {%if 'admin' in user.groups.get.name or user.groups.get.name == 'supporters' %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Suporte Sede
@@ -65,7 +65,7 @@
                     </ul>
                 </li>
                 {%endif%}
-                {%if 'admin' in user.groups.get.name or user.groups.get.name == 'sapore_printers' %}
+                {%if 'admin' in user.groups.get.name or user.groups.get.name == 'printers' %}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Impressoras
@@ -76,7 +76,7 @@
                     </ul>
                 </li>
                 {%endif%}
-                {%if 'admin' in user.groups.get.name or user.groups.get.name == 'sapore_telecom' or user.groups.get.name == 'tg_telecom' %}
+                {%if 'admin' in user.groups.get.name or 'telecom' in user.groups.get.name%}
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Telecom
@@ -87,12 +87,17 @@
                                 Móvel
                             </a>
                             <ul class="dropdown-menu">
+                                {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                                 <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                                {%endif%}
                                 <a class="dropdown-item" href="{% url 'line_list' %}">Linhas</a>
+                                {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                                 <a class="dropdown-item" href="{% url 'smartphone_list' %}">Smartphones</a>
                                 <a class="dropdown-item" href="{% url 'vivobox_list' %}">VivoBox</a>
+                                {%endif%}
                             </ul>
                         </li>
+                        {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                         <li class="dropdown-submenu">
                             <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
                                 Fixa
@@ -102,6 +107,7 @@
                                 <a class="dropdown-item" href="{% url 'line_list' %}">Contratos</a>
                             </ul>
                         </li>
+                        {%endif%}
                     </ul>
                 </li>
                 {%endif%}

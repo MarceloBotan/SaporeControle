@@ -139,16 +139,23 @@ def delete_model(request, telecom_type, model_id):
     
     return redirect('index')
 
+class Index(LoginRequiredMixin, TemplateView):
+    #Caminho do arquivo html
+    template_name = 'telecom/index.html'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
 #############
 # Dashboard #
 #############
 
-class Dashboard(LoginRequiredMixin, TemplateView):
+class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
     #Caminho do arquivo html
-    template_name = 'telecom/dashboard.html'
-    
+    template_name = 'telecom/dashboard.html'    
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_lineplan'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
