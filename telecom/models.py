@@ -1,11 +1,17 @@
 from django.db import models
 from django.utils import timezone
 
-LINE_STATUS_CHOICES = [
-    ("ATIVO","Ativo",),
-    ("BLOQUEADO","Bloqueado",),
-    ("CANCELADO","Cancelado",),
-    ("DISPONIVEL","Disponível",),
+LINE_ACCOUNTABLE_CHOICES = [
+    ("MAPEADO","Mapeado",),
+    ("TG","TG",),
+    ("SAPORE","Sapore",),
+]
+
+LINE_ACTION_CHOICES = [
+    ("OK","Ok",),
+    ("CANCELAR APOS FIDELIDADE","Cancelar Após Fidelidade",),
+    ("CANCELAR EM MAIO","Cancelar em Maio",),
+    ("MAPEAR","Mapear",),
 ]
 
 LINE_STATUS_RFP_CHOICES = [
@@ -16,12 +22,6 @@ LINE_STATUS_RFP_CHOICES = [
     ("SUSPENSO","Suspenso",),
     ("SUSPENSO FORA RFP","Suspenso Fora RFP",),
     ("CANCELADO","Cancelado",),
-]
-
-LINE_ACCOUNTABLE_CHOICES = [
-    ("MAPEADO","Mapeado",),
-    ("TG","TG",),
-    ("SAPORE","Sapore",),
 ]
 
 LINE_PLAN_TYPES = [
@@ -37,11 +37,11 @@ LINE_CONSUMPTION_CHOICES = [
     ("SEM CONSUMO 4 MESES","Sem Consumo 4 Meses",),
 ]
 
-LINE_ACTION_CHOICES = [
-    ("OK","Ok",),
-    ("CANCELAR APOS FIDELIDADE","Cancelar Após Fidelidade",),
-    ("CANCELAR EM MAIO","Cancelar em Maio",),
-    ("MAPEAR","Mapear",),
+LINE_STATUS_CHOICES = [
+    ("ATIVO","Ativo",),
+    ("BLOQUEADO","Bloqueado",),
+    ("CANCELADO","Cancelado",),
+    ("DISPONIVEL","Disponível",),
 ]
 
 SMARTPHONE_STATUS_CHOICES = [
@@ -95,6 +95,9 @@ class Line(models.Model):
     branch_mapped = models.BooleanField(default=True, verbose_name='CR Mapeado')
     auth_attachment = models.FileField(blank=True, upload_to='line_docs/%Y/%m', verbose_name='Autorização')
 
+    def __str__(self):
+        return self.name
+
 class LinePlan(models.Model):
     name = models.CharField(max_length=31, unique=True, default='-', verbose_name='Plano')
     plan_type = models.CharField(max_length=15, default='DADOS', choices=LINE_PLAN_TYPES, verbose_name='Tipo')
@@ -116,9 +119,12 @@ class Smartphone(models.Model):
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='smartphone_docs/%Y/%m', verbose_name='Autorização')
 
+    def __str__(self):
+        return self.name
+
 class SmartModel(models.Model):
     name = models.CharField(max_length=31, default='-', verbose_name='Modelo')
-    date_release = models.DateField(verbose_name='Data de Lançamento')
+    date_release = models.DateField(default=timezone.now, verbose_name='Data de Lançamento')
 
     def __str__(self):
         return self.name
@@ -134,6 +140,9 @@ class VivoBox(models.Model):
     date_update = models.DateField(default=timezone.now, blank=True)
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='vivobox_docs/%Y/%m', verbose_name='Autorização')
+
+    def __str__(self):
+        return self.name
 
 class BoxModel(models.Model):
     name = models.CharField(max_length=31, default='-', verbose_name='Modelo')

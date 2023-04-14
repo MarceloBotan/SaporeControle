@@ -1,8 +1,9 @@
 from django.forms import ModelForm
+from django import forms
 from .models import Line, Smartphone, VivoBox
 from .models import SmartModel, BoxModel, LinePlan
 from branch.models import Branch
-from telecom import models
+from django.utils import timezone
 
 class FormLinePlan(ModelForm):
     #Validar e alterar os campos do formulário

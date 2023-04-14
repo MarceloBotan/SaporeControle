@@ -1,14 +1,15 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Branch, UploadFile
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView
 from .forms import FormUploadFile
+from django.contrib import messages
 
 from sapore_controle.settings import MEDIA_ROOT
 import pandas as pd
 import os
-
+import warnings
 
 class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = Branch
@@ -55,14 +56,22 @@ class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        with warnings.catch_warnings(record=True):
+            warnings.simplefilter("always")
+            df = pd.read_excel(form.cleaned_data['file'], usecols=('B,D,F,I,K'), engine='openpyxl')
+        
+        keys = ['CDFILIAL', 'NMFILIAL', 'ESTRUTURA', 'UNIDADE_ENCERRADA', 'NOME_REGIONAL']
+        for df_key in df.keys():
+            if df_key in keys:
+                continue
+            messages.error(self.request, 'Campos inválidos')
+            return redirect('branch_edit')
+
         docs_old = UploadFile.objects.all()
-        for doc in docs_old:
-            os.remove(MEDIA_ROOT / doc.file.name)
         docs_old.delete()
 
         upload_file = UploadFile(**form.cleaned_data)
 
-        df = pd.read_excel(upload_file.file, usecols=('B,D,F,I,K'))
         for df_branch in df.values:
             branch, created = Branch.objects.get_or_create(branch=df_branch[0])
             branch.name = df_branch[1]
@@ -75,6 +84,7 @@ class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 
             branch.save()
 
+        upload_file.file = None
         upload_file.save()
 
         return redirect('branch_list')

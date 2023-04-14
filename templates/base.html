@@ -7,9 +7,42 @@
     {% block head %}{% endblock %}
 
     {% include 'partials/_head.html' %}
-
 </head>
 <body>
+    <style>
+        #loadingDiv {
+            position:absolute;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-color:rgba(46, 42, 37, 0.6);
+            z-index: 1;
+        }
+    </style>
+    <script>
+        function showLoaderOnClick(url) {
+            showLoader();
+            window.location=url;
+        }
+        function showLoader(){
+            $('body').append(
+                '<div id="loadingDiv" class="d-flex justify-content-center">\
+                <div class="spinner-border text-light" style="margin: auto; width: 3rem; height: 3rem;" role="status">\
+                <span class="sr-only">Loading...</span></div></div>'
+            );
+        }
+
+        $(window).on('load', function(){
+            setTimeout(removeLoader, 500); //wait for page load
+            showLoader();
+        });
+
+        function removeLoader(){
+            $( "#loadingDiv" ).remove(); //makes page more lightweight 
+        }
+    </script>
+
     {% block scripts %}{% endblock scripts %}
 
     {% include 'partials/_nav.html' %}
