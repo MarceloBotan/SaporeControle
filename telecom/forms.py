@@ -171,7 +171,7 @@ class FormAddLine(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Line
-        fields = ['name', 'number', 'sim_card', 'telecom', 'plan', 'branch', 'receipt', \
+        fields = ['name', 'number', 'sim_card', 'plan', 'branch', 'receipt', \
                    'status', 'vip', 'auth_attachment']
 
 def validator_smartphone(self, data):

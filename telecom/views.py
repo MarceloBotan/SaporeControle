@@ -748,6 +748,15 @@ class LineAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         line = Line(**form.cleaned_data)
 
+        line_plan = line.plan.name.upper()
+        
+        if 'TIM' in line_plan:
+            line.telecom = 'TIM'
+        elif 'CLARO' in line_plan:
+            line.telecom = 'CLARO'
+        else:
+            line.telecom = 'VIVO'
+
         if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
             line.action = 'MAPEAR'
         elif line.name_mapped and line.branch_mapped and line.action == 'MAPEAR':

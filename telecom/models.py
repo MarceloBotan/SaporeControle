@@ -131,7 +131,7 @@ class Line(models.Model):
     plan = models.ForeignKey('LinePlan', on_delete=models.DO_NOTHING)
     telecom = models.CharField(default='-', max_length=15, choices=LINE_TELECOM_CHOICES, verbose_name='Operadora')
     status = models.CharField(max_length=31, default='-', choices=LINE_STATUS_CHOICES, verbose_name='Status')
-    status_rfp = models.CharField(max_length=31, default='-', choices=LINE_STATUS_RFP_CHOICES, \
+    status_rfp = models.CharField(max_length=31, default='ATIVO', choices=LINE_STATUS_RFP_CHOICES, \
                                   verbose_name='Status RFP')
     date_update = models.DateField(default=timezone.now, blank=True)
     branch_closed = models.BooleanField(default=False)
