@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.http import StreamingHttpResponse
 
 from django.contrib import messages
@@ -139,11 +139,14 @@ def delete_model(request, telecom_type, model_id):
     
     return redirect('index')
 
-class Index(LoginRequiredMixin, TemplateView):
-    #Caminho do arquivo html
-    template_name = 'telecom/index.html'
-    #Redireciona caso não estiver logado
-    login_url = '/accounts/login/'
+@login_required(redirect_field_name='login')
+def index(request):
+    if 'sapore_telecom' in request.user.groups.get().name:
+        return redirect('dashboard')
+    if 'tg_' in request.user.groups.get().name:
+        return redirect('line_list')
+    return render(request, 'telecom/index.html')
+    
 
 #############
 # Dashboard #
