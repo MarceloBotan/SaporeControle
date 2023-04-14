@@ -139,14 +139,14 @@
                     <div class="card border-secondary px-3 py-3">
                         <form class="form my-2">
                         <h6><b>Modelos</b></h6>
-                        {% for smartphone in qs_smartphone_models %}
+                        {% for model in qs_smartphone_models %}
                         <div>
-                            {% if smartphone.s_model in qs_smartphone_filter_models %}
-                            <input name="smartphone_{{smartphone.s_model}}" id="smartphone_{{smartphone.s_model}}" type="checkbox" checked>
+                            {% if model in qs_smartphone_filter_models %}
+                            <input name="smartphone_{{model}}" id="smartphone_{{model}}" type="checkbox" checked>
                             {% else %}
-                            <input name="smartphone_{{smartphone.s_model}}" id="smartphone_{{smartphone.s_model}}" type="checkbox">
+                            <input name="smartphone_{{model}}" id="smartphone_{{model}}" type="checkbox">
                             {% endif %}
-                            <label for="smartphone_{{smartphone.s_model}}"> {{smartphone.s_model}}</label>
+                            <label for="smartphone_{{model}}"> {{model}}</label>
                         </div>
                         {% endfor %}
                         <div class="d-flex justify-content-between">
@@ -231,14 +231,14 @@
                     <div class="card border-secondary px-3 py-3">
                         <form class="form my-2">
                         <h6><b>Modelos</b></h6>
-                        {% for vivobox in qs_vivobox_models %}
+                        {% for model in qs_vivobox_models %}
                         <div>
-                            {% if vivobox.v_model in qs_vivobox_filter_models %}
-                            <input name="vivobox_{{vivobox.v_model}}" id="vivobox_{{vivobox.v_model}}" type="checkbox" checked>
+                            {% if model in qs_vivobox_filter_models %}
+                            <input name="vivobox_{{model}}" id="vivobox_{{model}}" type="checkbox" checked>
                             {% else %}
-                            <input name="vivobox_{{vivobox.v_model}}" id="vivobox_{{vivobox.v_model}}" type="checkbox">
+                            <input name="vivobox_{{model}}" id="vivobox_{{model}}" type="checkbox">
                             {% endif %}
-                            <label for="vivobox_{{vivobox.v_model}}"> {{vivobox.v_model}}</label>
+                            <label for="vivobox_{{model}}"> {{model}}</label>
                         </div>
                         {% endfor %}
                         <div class="d-flex justify-content-between">

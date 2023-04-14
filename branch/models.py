@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 
 class Branch(models.Model):
-    branch = models.IntegerField(default=0)
+    branch = models.IntegerField(default=0, unique=True)
     name = models.CharField(max_length=255, default='-')
     structure = models.CharField(max_length=31, default='-')
     closed = models.BooleanField(default=False)

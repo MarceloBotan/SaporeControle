@@ -43,9 +43,15 @@
             <ul class="navbar-nav ml-auto">
                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown" href="{% url 'branch_list' %}">
-                        Filiais
+                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Parâmetros
                     </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="{% url 'branch_list' %}">Filiais</a>
+                        <a class="dropdown-item" href="{% url 's_model_list' %}">Modelos Smartphones</a>
+                        <a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos Vivobox</a>
+                        <a class="dropdown-item" href="{% url 'line_plan_list' %}">Planos Linhas</a>
+                    </ul>
                 </li>
                 {%endif%}
                 {%if 'admin' in user.groups.get.name or user.groups.get.name == 'sapore_supporters' %}

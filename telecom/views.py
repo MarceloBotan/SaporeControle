@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.http import StreamingHttpResponse, HttpResponseForbidden
+from django.http import StreamingHttpResponse
+
+from django.contrib import messages
 
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.views.generic.list import ListView
@@ -10,9 +12,13 @@ from django.views.generic import TemplateView
 from django.utils import timezone
 
 from .forms import FormLine, FormAddLine, FormSmartphone, FormAddSmartphone, FormVivoBox, FormAddVivoBox
+from .forms import FormSmartModel, FormBoxModel, FormLinePlan
+
+from django.core.exceptions import PermissionDenied
 
 from django.db.models import Q, Count
-from .models import Line, Smartphone, VivoBox
+from .models import Line, Smartphone, VivoBox, LinePlan
+from .models import SmartModel, BoxModel
 
 from itertools import chain
 from sapore_controle.settings import MEDIA_ROOT
@@ -26,7 +32,8 @@ class Echo:
 @login_required(redirect_field_name='login')
 def generate_csv(request, telecom_type, csv_simple):
     if not request.user.has_perm('telecom.view_' + telecom_type):
-        return HttpResponseForbidden()
+        #Sobre erro 403 - Permissão Negada
+        raise PermissionDenied()
     
     lines = Line.objects.all()
     smartphones = Smartphone.objects.all()
@@ -99,6 +106,43 @@ def generate_csv(request, telecom_type, csv_simple):
                  str(timezone.now().strftime("%d-%m-%Y")) + '".csv"'},
     )
 
+@login_required(redirect_field_name='login')
+def delete_model(request, telecom_type, model_id):
+    if 'sapore' not in request.user.groups.get().name:
+        #Sobre erro 403 - Permissão Negada
+        raise PermissionDenied()
+
+    match telecom_type:
+        case 'vivobox':
+            try:
+                box_model = BoxModel.objects.get(id=model_id)
+                box_model.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('v_model_list')
+        
+        case 'smartphone':
+            try:
+                smart_model = SmartModel.objects.get(id=model_id)
+                smart_model.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('s_model_list')
+        
+        case 'line':
+            try:
+                line_plan = LinePlan.objects.get(id=model_id)
+                line_plan.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('line_plan_list')
+    
+    return redirect('index')
+
+#############
+# Dashboard #
+#############
+
 class Dashboard(LoginRequiredMixin, TemplateView):
     #Caminho do arquivo html
     template_name = 'telecom/dashboard.html'
@@ -119,7 +163,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
         smartphone_models = (Smartphone.objects
             .filter()
             .values('s_model')
-            .annotate(status_count=Count('s_model'))
+            .annotate(s_model_count=Count('s_model'))
             .order_by('s_model')
         )
 
@@ -130,16 +174,20 @@ class Dashboard(LoginRequiredMixin, TemplateView):
             .order_by('status')
 
         smartphone_filter_models = []
+        smartphone_models_names = []
         s_models = []
         for s_model in smartphone_models:
-            if self.request.GET.get('smartphone_' + s_model['s_model']) == 'on':
-                smartphone_filter_models.append(s_model['s_model'])
-                s_models.append(s_model['s_model'])
+            smart_model = SmartModel.objects.get(id=s_model['s_model']).name
+            smartphone_models_names.append(smart_model)
+            if self.request.GET.get('smartphone_' + smart_model) == 'on':
+                smartphone_filter_models.append(smart_model)
+                s_models.append(smart_model)
 
         if not smartphone_filter_models:
-            for s_model in smartphone_models:
-                smartphone_filter_models.append(s_model['s_model'])
-                s_models.append(s_model['s_model'].upper())
+            for s_model in smartphone_models_names:
+                smart_model = s_model
+                smartphone_filter_models.append(smart_model)
+                s_models.append(smart_model)
 
         s_model_count = []
         for i in range(len(s_models)):
@@ -150,7 +198,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
                     if smartphone['status'].upper() != s['status'].upper():
                         continue
                     
-                    if smartphone['s_model'].upper() == s_models[i]:
+                    if SmartModel.objects.get(id=smartphone['s_model']).name == s_models[i]:
                         smartphone_model.append(smartphone['status_count'])
                         has_append_model = True
                     
@@ -230,16 +278,19 @@ class Dashboard(LoginRequiredMixin, TemplateView):
         )
 
         vivobox_filter_models = []
+        vivobox_models_names = []
         v_models = []
         for v_model in vivobox_models:
-            if self.request.GET.get('vivobox_' + v_model['v_model']) == 'on':
-                vivobox_filter_models.append(v_model['v_model'])
-                v_models.append(v_model['v_model'])
+            box_model = BoxModel.objects.get(id=v_model['v_model']).name
+            vivobox_models_names.append(box_model)
+            if self.request.GET.get('vivobox_' + box_model) == 'on':
+                vivobox_filter_models.append(box_model)
+                v_models.append(box_model)
 
         if not vivobox_filter_models:
-            for v_model in vivobox_models:
-                vivobox_filter_models.append(v_model['v_model'])
-                v_models.append(v_model['v_model'].upper())
+            for v_model in vivobox_models_names:
+                vivobox_filter_models.append(v_model)
+                v_models.append(v_model)
 
         v_model_count = []
         for i in range(len(v_models)):
@@ -250,7 +301,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
                     if vivobox['status'].upper() != v['status'].upper():
                         continue
                     
-                    if vivobox['v_model'].upper() == v_models[i]:
+                    if BoxModel.objects.get(id=vivobox['v_model']).name == v_models[i]:
                         vivobox_model.append(vivobox['status_count'])
                         has_append_model = True
                     
@@ -259,7 +310,7 @@ class Dashboard(LoginRequiredMixin, TemplateView):
             v_model_count.append(vivobox_model)
 
         context["qs_smartphone_status"] = list(smartphone_status)
-        context["qs_smartphone_models"] = list(smartphone_models)
+        context["qs_smartphone_models"] = smartphone_models_names
         context["qs_smartphone_filter_models"] = smartphone_filter_models
         context["qs_smartphone_count"] = list(s_model_count)
         context["qs_smartphone"] = list(smartphones)
@@ -271,12 +322,215 @@ class Dashboard(LoginRequiredMixin, TemplateView):
         context["qs_line"] = lines
 
         context["qs_vivobox_status"] = list(vivobox_status)
-        context["qs_vivobox_models"] = list(vivobox_models)
+        context["qs_vivobox_models"] = vivobox_models_names
         context["qs_vivobox_filter_models"] = vivobox_filter_models
         context["qs_vivobox_count"] = list(v_model_count)
         context["qs_vivobox"] = list(vivoboxs)
 
         return context
+
+############
+# LinePlan #
+############
+
+class LinePlanList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = LinePlan
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line_plan_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_lineplan'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class LinePlanEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = LinePlan
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line_plan_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormLinePlan
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_lineplan'
+
+    def form_valid(self, form):
+        line_plan = self.get_object()
+        line_plan.name = form.cleaned_data['name']
+
+        line_plan.save()
+
+        return redirect('line_plan_list')
+
+class LinePlanAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = LinePlan
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line_plan_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormLinePlan
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_lineplan'
+
+    def form_valid(self, form):
+        smart_model, created = LinePlan.objects.get_or_create(**form.cleaned_data)
+        
+        if created:
+            smart_model.save()
+
+        return redirect('line_plan_list')
+
+##############
+# SmartModel #
+##############
+
+class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = SmartModel
+    #Caminho do arquivo html
+    template_name = 'telecom/param/s_model_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_smartmodel'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class SmartModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = SmartModel
+    #Caminho do arquivo html
+    template_name = 'telecom/param/s_model_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormSmartModel
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_smartmodel'
+
+    def form_valid(self, form):
+        smart_model = self.get_object()
+        smart_model.name = form.cleaned_data['name']
+        smart_model.date_release = form.cleaned_data['date_release']
+
+        smart_model.save()
+
+        return redirect('s_model_list')
+
+class SmartModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = SmartModel
+    #Caminho do arquivo html
+    template_name = 'telecom/param/s_model_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormSmartModel
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_smartmodel'
+
+    def form_valid(self, form):
+        smart_model, created = SmartModel.objects.get_or_create(**form.cleaned_data)
+        
+        if created:
+            smart_model.save()
+
+        return redirect('s_model_list')
+
+############
+# BoxModel #
+############
+
+class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = BoxModel
+    #Caminho do arquivo html
+    template_name = 'telecom/param/v_model_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_boxmodel'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class BoxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = BoxModel
+    #Caminho do arquivo html
+    template_name = 'telecom/param/v_model_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormBoxModel
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_boxmodel'
+
+    def form_valid(self, form):
+        box_model = self.get_object()
+        box_model.name = form.cleaned_data['name']
+
+        box_model.save()
+
+        return redirect('v_model_list')
+
+class BoxModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = BoxModel
+    #Caminho do arquivo html
+    template_name = 'telecom/param/v_model_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormBoxModel
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_boxmodel'
+
+    def form_valid(self, form):
+        box_model, created = BoxModel.objects.get_or_create(**form.cleaned_data)
+        if created:
+            box_model.save()
+
+        return redirect('v_model_list')
 
 ##########
 # Linhas #

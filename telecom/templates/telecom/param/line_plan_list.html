@@ -1,0 +1,20 @@
+{% extends 'telecom/param/index_list.html' %}
+
+{% block title %}Linhas | Planos | Sapore{% endblock %}
+
+
+{%block list_title%}Planos {%endblock%}
+{%block list_add%} Adicionar Plano{%endblock%}
+{%block list_add_url%}{% url 'line_plan_add' %}{%endblock%}
+
+{%block list_th%}
+<th><label scope="col">Plano</label></th>
+<th></th>
+{%endblock%}
+
+{%block list_tb%}
+<td>{{object.name}}</td>
+{%endblock%}
+
+{%block list_edit_url%}{% url 'line_plan_edit' object.id %}{%endblock%}
+{%block list_delete_url%}{% url 'delete_model' 'line' object.id %}{%endblock%}

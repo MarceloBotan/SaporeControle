@@ -124,11 +124,11 @@ VIVOBOX_MODEL_CHOICES = [
 class Line(models.Model):
     name = models.CharField(max_length=255, default='-', verbose_name='Nome')
     branch = models.IntegerField(default=0, verbose_name='Filial')
-    number = models.BigIntegerField(default=0, verbose_name='Número')
+    number = models.BigIntegerField(default=0, unique=True, verbose_name='Número')
     sim_card = models.CharField(max_length=20, default='-', verbose_name='SIM Card')
     sim_card_old = models.CharField(max_length=20, default='-')
     receipt = models.IntegerField(default=0, verbose_name='Nota Fiscal')
-    plan = models.CharField(default='-', max_length=31, choices=LINE_PLAN_CHOICES, verbose_name='Plano')
+    plan = models.ForeignKey('LinePlan', on_delete=models.DO_NOTHING)
     telecom = models.CharField(default='-', max_length=15, choices=LINE_TELECOM_CHOICES, verbose_name='Operadora')
     status = models.CharField(max_length=31, default='-', choices=LINE_STATUS_CHOICES, verbose_name='Status')
     status_rfp = models.CharField(max_length=31, default='-', choices=LINE_STATUS_RFP_CHOICES, \
@@ -145,14 +145,19 @@ class Line(models.Model):
     branch_mapped = models.BooleanField(default=True, verbose_name='CR Mapeado')
     auth_attachment = models.FileField(blank=True, upload_to='line_docs/%Y/%m', verbose_name='Autorização')
 
+class LinePlan(models.Model):
+    name = models.CharField(max_length=31, unique=True, default='-', verbose_name='Plano')
+
+    def __str__(self):
+        return self.name
+
 class Smartphone(models.Model):
     name = models.CharField(max_length=255, default='-', verbose_name='Nome')
     branch = models.IntegerField(default=0, verbose_name='Filial')
     number = models.BigIntegerField(default=0, verbose_name='Número')
-    imei_1 = models.CharField(max_length=15, default='-', verbose_name='IMEI 1')
+    imei_1 = models.CharField(max_length=15, unique=True, default='-', verbose_name='IMEI 1')
     imei_2 = models.CharField(max_length=15, default='-', verbose_name='IMEI 2')
-    s_model = models.CharField(max_length=31, default='-', choices=SMARTPHONE_MODEL_CHOICES, \
-                               verbose_name='Modelo')
+    s_model = models.ForeignKey('SmartModel', on_delete=models.DO_NOTHING, verbose_name='Modelo')
     receipt = models.IntegerField(default=0, verbose_name='Nota Fiscal')
     status = models.CharField(max_length=31, default='-', choices=SMARTPHONE_STATUS_CHOICES, \
                               verbose_name='Status')
@@ -160,14 +165,27 @@ class Smartphone(models.Model):
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='smartphone_docs/%Y/%m', verbose_name='Autorização')
 
+class SmartModel(models.Model):
+    name = models.CharField(max_length=31, default='-', verbose_name='Modelo')
+    date_release = models.DateField(verbose_name='Data de Lançamento')
+
+    def __str__(self):
+        return self.name
+
 class VivoBox(models.Model):
     name = models.CharField(max_length=255, default='-', verbose_name='Nome')
     branch = models.IntegerField(default=0, verbose_name='Filial')
     number = models.BigIntegerField(default=0, verbose_name='Número')
-    imei_1 = models.CharField(max_length=15, default='-', verbose_name='IMEI 1')
-    v_model = models.CharField(max_length=31, default='-', choices=VIVOBOX_MODEL_CHOICES, verbose_name='Modelo')
+    imei_1 = models.CharField(max_length=15, unique=True, default='-', verbose_name='IMEI 1')
+    v_model = models.ForeignKey('BoxModel', on_delete=models.DO_NOTHING, verbose_name='Modelo')
     receipt = models.IntegerField(default=0, verbose_name='Nota Fiscal')
     status = models.CharField(max_length=31, default='-', choices=VIVOBOX_STATUS_CHOICES, verbose_name='Status')
     date_update = models.DateField(default=timezone.now, blank=True)
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='vivobox_docs/%Y/%m', verbose_name='Autorização')
+
+class BoxModel(models.Model):
+    name = models.CharField(max_length=31, default='-', verbose_name='Modelo')
+
+    def __str__(self):
+        return self.name

@@ -7,6 +7,20 @@ urlpatterns = [
     
     path('generate_csv/<str:telecom_type>/<int:csv_simple>', views.generate_csv, name='generate_csv'),
 
+    path('delete_model/<str:telecom_type>/<int:model_id>', views.delete_model, name='delete_model'),
+
+    path('s_model_list/', views.SmartModelList.as_view(), name='s_model_list'),
+    path('s_model_edit/<int:pk>', views.SmartModelEdit.as_view(), name='s_model_edit'),
+    path('s_model_add/', views.SmartModelAdd.as_view(), name='s_model_add'),
+
+    path('v_model_list/', views.BoxModelList.as_view(), name='v_model_list'),
+    path('v_model_edit/<int:pk>', views.BoxModelEdit.as_view(), name='v_model_edit'),
+    path('v_model_add/', views.BoxModelAdd.as_view(), name='v_model_add'),
+
+    path('line_plan_list/', views.LinePlanList.as_view(), name='line_plan_list'),
+    path('line_plan_edit/<int:pk>', views.LinePlanEdit.as_view(), name='line_plan_edit'),
+    path('line_plan_add/', views.LinePlanAdd.as_view(), name='line_plan_add'),
+
     path('line_list/', views.LineList.as_view(), name='line_list'),
     path('line_search/', views.LineSearch.as_view(), name='line_search'),
     path('line_details/<int:pk>', views.LineDetails.as_view(), name='line_details'),

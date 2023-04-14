@@ -7,8 +7,6 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    replaces = [('telecom', '0001_initial'), ('telecom', '0002_branch_line_smartphone_vivobox_delete_usersession'), ('telecom', '0003_line_action_alter_line_plan'), ('telecom', '0004_alter_line_action'), ('telecom', '0005_alter_line_action_alter_line_plan'), ('telecom', '0006_line_consumption_line_vip_alter_line_status'), ('telecom', '0007_line_accountable_line_status_rfp'), ('telecom', '0008_uploadfile_alter_line_accountable_and_more'), ('telecom', '0009_alter_uploadfile_file')]
-
     dependencies = [
         ('sessions', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
