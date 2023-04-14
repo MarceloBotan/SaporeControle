@@ -4,7 +4,6 @@ from .models import SmartModel, BoxModel, LinePlan
 from branch.models import Branch
 from telecom import models
 
-
 class FormLinePlan(ModelForm):
     #Validar e alterar os campos do formulário
     def clean(self):
