@@ -146,7 +146,6 @@ def index(request):
     if 'tg_' in request.user.groups.get().name:
         return redirect('line_list')
     return render(request, 'telecom/index.html')
-    
 
 #############
 # Dashboard #
