@@ -36,8 +36,6 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'branch.apps.BranchConfig',
     'telecom.apps.TelecomConfig',
-    'supporters.apps.SupportersConfig',
-    'printers.apps.PrintersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

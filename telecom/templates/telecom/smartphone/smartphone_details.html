@@ -21,9 +21,11 @@
         </div>
         <div class="col">
             <dt>Número</dt>
-            <dd>{% if smartphone.number %}{{smartphone.number}}{% else %}-{% endif %}</dd>
+            <dd>{% if smartphone.number %}
+                <a href="{% url 'line_details' smartphone.line_id %}">{{smartphone.number}}</a>
+                    {% else %}-{% endif %}</dd>
             <dt>Modelo</dt>
-            <dd>{% if smartphone.s_model %}{{smartphone.s_model}}{% else %}-{% endif %}</dd>
+            <dd>{% if smartphone.obj_model %}{{smartphone.obj_model}}{% else %}-{% endif %}</dd>
             <dt>Autorização</dt>
             <dd>{% if smartphone.auth_attachment == 'False' or not smartphone.auth_attachment %}-
                 {% else %}<a href="/media/{{smartphone.auth_attachment}}">Arquivo</a>{% endif %}</dd>

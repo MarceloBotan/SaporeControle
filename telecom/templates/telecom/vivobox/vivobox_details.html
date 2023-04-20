@@ -21,9 +21,11 @@
         </div>
         <div class="col">
             <dt>Número</dt>
-            <dd>{% if vivobox.number %}{{vivobox.number}}{% else %}-{% endif %}</dd>
+            <dd>{% if vivobox.number %}
+                <a href="{% url 'line_details' vivobox.line_id %}">{{vivobox.number}}</a>
+                {% else %}-{% endif %}</dd>
             <dt>Modelo</dt>
-            <dd>{% if vivobox.v_model %}{{vivobox.v_model}}{% else %}-{% endif %}</dd>
+            <dd>{% if vivobox.obj_model %}{{vivobox.obj_model}}{% else %}-{% endif %}</dd>
             <dt>Autorização</dt>
             <dd>{% if vivobox.auth_attachment == 'False' or not vivobox.auth_attachment %}-
                 {% else %}<a href="/media/{{vivobox.auth_attachment}}">Arquivo</a>{% endif %}</dd>

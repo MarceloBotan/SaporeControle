@@ -33,35 +33,45 @@
 <div class="collapse" id="table_smartphone">
     <div class="card border-secondary px-3 py-3">
         <form class="form my-2" action="{% url 'smartphone_search' %}">
-            <div class="form-group">
-                <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
-                        type="search" placeholder="Pesquisar" aria-label="Search">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="Nome" aria-label="Search">
+                </div>
+                <div class="form-group col-md-6">
+                    <input name="filter_line" value="{{ request.GET.filter_line }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="Número" aria-label="Search">
+                </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-4">
-                    <select name="filter_s_model" class="custom-select">
+                <div class="form-group col-md-3">
+                    <select name="filter_model" class="custom-select">
                         <option value="">Modelo</option>
-                        {% for smartphone in qs_smartphone_s_model %}
-                        {% if smartphone.s_model == request.GET.filter_s_model %}
-                            <option selected value="{{smartphone.s_model}}">{{smartphone.s_model|title}}</option>
+                        {% for model in qs_smartphone_model %}
+                        {% if model.name == request.GET.filter_model %}
+                            <option selected value="{{model}}">{{model}}</option>
                         {% else %}
-                            <option value="{{smartphone.s_model}}">{{smartphone.s_model|title}}</option>
+                            <option value="{{model}}">{{model}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
+                    <input name="filter_imei" value="{{ request.GET.filter_imei }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="IMEI" aria-label="Search">
+                </div>
+                <div class="form-group col-md-3">
                     <input name="filter_branch" value="{{ request.GET.filter_branch }}" class="form-control mr-sm-2" 
                         type="search" placeholder="Filial" aria-label="Search">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <select name="filter_status" class="custom-select">
                         <option value="">Status</option>
-                        {% for smartphone in qs_smartphone_status %}
-                        {% if smartphone.status == request.GET.filter_status %}
-                            <option selected value="{{smartphone.status}}">{{smartphone.status|title}}</option>
+                        {% for status in qs_smartphone_status %}
+                        {% if status.name == request.GET.filter_status %}
+                            <option selected value="{{status}}">{{status|title}}</option>
                         {% else %}
-                            <option value="{{smartphone.status}}">{{smartphone.status|title}}</option>
+                            <option value="{{status}}">{{status|title}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -95,7 +105,7 @@
         <tbody>
             {% for smartphone in smartphones %}
                 <tr>
-                    <td>{{smartphone.s_model}}</td>
+                    <td>{{smartphone.obj_model}}</td>
                     <td><a href="{% url 'smartphone_details' smartphone.id %}">{{smartphone.imei_1}}</a></td>
                     <td>{{smartphone.name}}</td>
                     <td>{{smartphone.branch}}</td>

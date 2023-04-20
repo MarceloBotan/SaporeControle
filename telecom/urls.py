@@ -8,7 +8,9 @@ urlpatterns = [
     path('generate_csv/<str:telecom_type>/<int:csv_simple>', views.generate_csv, name='generate_csv'),
 
     path('delete_model/<str:telecom_type>/<int:model_id>', views.delete_model, name='delete_model'),
+    path('delete_status/<str:telecom_type>/<int:status_id>/<int:rfp>', views.delete_status, name='delete_status'),
 
+    #Modelo/Plano#
     path('s_model_list/', views.SmartModelList.as_view(), name='s_model_list'),
     path('s_model_edit/<int:pk>', views.SmartModelEdit.as_view(), name='s_model_edit'),
     path('s_model_add/', views.SmartModelAdd.as_view(), name='s_model_add'),
@@ -21,6 +23,24 @@ urlpatterns = [
     path('line_plan_edit/<int:pk>', views.LinePlanEdit.as_view(), name='line_plan_edit'),
     path('line_plan_add/', views.LinePlanAdd.as_view(), name='line_plan_add'),
 
+    #Status#
+    path('s_status_list/', views.SmartStatusList.as_view(), name='s_status_list'),
+    path('s_status_edit/<int:pk>', views.SmartStatusEdit.as_view(), name='s_status_edit'),
+    path('s_status_add/', views.SmartStatusAdd.as_view(), name='s_status_add'),
+
+    path('v_status_list/', views.BoxStatusList.as_view(), name='v_status_list'),
+    path('v_status_edit/<int:pk>', views.BoxStatusEdit.as_view(), name='v_status_edit'),
+    path('v_status_add/', views.BoxStatusAdd.as_view(), name='v_status_add'),
+
+    path('line_status_list/', views.LineStatusList.as_view(), name='line_status_list'),
+    path('line_status_edit/<int:pk>', views.LineStatusEdit.as_view(), name='line_status_edit'),
+    path('line_status_add/', views.LineStatusAdd.as_view(), name='line_status_add'),
+
+    path('line_status_rfp_list/', views.LineStatusRFPList.as_view(), name='line_status_rfp_list'),
+    path('line_status_rfp_edit/<int:pk>', views.LineStatusRFPEdit.as_view(), name='line_status_rfp_edit'),
+    path('line_status_rfp_add/', views.LineStatusRFPAdd.as_view(), name='line_status_rfp_add'),
+
+    #Itens#
     path('line_list/', views.LineList.as_view(), name='line_list'),
     path('line_search/', views.LineSearch.as_view(), name='line_search'),
     path('line_details/<int:pk>', views.LineDetails.as_view(), name='line_details'),

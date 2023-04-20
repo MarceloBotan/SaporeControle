@@ -8,6 +8,19 @@
 
 {% block scripts %}
 <script>
+    function onToggleLogCheckbox(element){
+        if (element.id == 'check_smart'){
+            dash_smart.options = chartOptions(element.checked);
+            dash_smart.update();
+        } else if (element.id == 'check_line'){
+            dash_line.options = chartOptions(element.checked);
+            dash_line.update();
+        } else if (element.id == 'check_box'){
+            dash_box.options = chartOptions(element.checked);
+            dash_box.update();
+        };
+    };
+
     function color_generator(opacidade = 1){
         let r = Math.random() * 255;
         let g = Math.random() * 255;
@@ -59,6 +72,7 @@
             display: true,
             ticks: {
                 beginAtZero: true,
+                stepSize: 1
             },
         }
     }
@@ -80,7 +94,7 @@
         return {
             type: 'bar',
             data: {
-                labels: unpack_list(labels,'status'),
+                labels: labels,
                 datasets: dataset(args),
             },
             options: {
@@ -95,26 +109,38 @@
         };
     };
 
+    function create_dash(labels, label_legend, element, log_checkbox){
+        ctx = document.getElementById(element).getContext('2d');
+        log_checkbox = document.getElementById(log_checkbox).checked;
+        return new Chart(ctx, config_chart(log_checkbox, label_legend, 'status_count', labels, 
+            {%for smartphone_count in qs_smartphone_count%}{{smartphone_count}},{%endfor%}));
+    };
+
+    function chartOptions(log){
+        return {
+            responsive: true,
+            legend: {
+                position: 'bottom',
+            },
+            scales: {
+                yAxes: [log_option(log)]
+            },
+        }
+    };
+
+    dash_smart = null;
+    dash_box = null;
+    dash_line = null;
+
     $(document).ready(function(){
-        labels = {{qs_smartphone_status|safe}};
-        data_1 = {{qs_smartphone|safe}};
-        label_legend = {{qs_smartphone_filter_models|safe}};
-        ctx = document.getElementById('chart_smartphone').getContext('2d');
-        chart = new Chart(ctx, config_chart(true, label_legend, 'status_count', labels, 
-            {%for smartphone_count in qs_smartphone_count%}{{smartphone_count|safe}},{%endfor%}));
+        dash_smart = create_dash({{qs_smartphone_status|safe}}, {{qs_smartphone_filter_models|safe}}, 
+            'chart_smartphone', 'check_smart');
 
-        labels = {{qs_line_status|safe}};
-        label_legend = {{qs_line_filter_telecom|safe}}
-        ctx = document.getElementById('chart_line').getContext('2d');
-        chart = new Chart(ctx, config_chart(true, label_legend, 'status_count', labels, 
-            {%for line_count in qs_line_count%}{{line_count|safe}},{%endfor%}));
+        dash_line = create_dash({{qs_line_status|safe}}, {{qs_line_filter_telecom|safe}}, 
+            'chart_line', 'check_line');
 
-        labels = {{qs_vivobox_status|safe}};
-        data_1 = {{qs_vivobox|safe}};
-        label_legend = {{qs_vivobox_filter_models|safe}};
-        ctx = document.getElementById('chart_vivobox').getContext('2d');
-        chart = new Chart(ctx, config_chart(true, label_legend, 'status_count', labels, 
-            {%for vivobox_count in qs_vivobox_count%}{{vivobox_count|safe}},{%endfor%}));
+        dash_box = create_dash({{qs_vivobox_status|safe}}, {{qs_vivobox_filter_models|safe}}, 
+            'chart_vivobox', 'check_box');
     });
 </script>
 {% endblock %}
@@ -166,8 +192,13 @@
             </div>
             <canvas id="chart_smartphone"></canvas>
             <div class="d-flex justify-content-between">
-                <div></div>
-                <div class="justify-content-center">
+                <div class="mt-2 ml-5">
+                    <input class="check-input" type="checkbox" value="" onchange="onToggleLogCheckbox(this)" id="check_smart">
+                    <label class="check-label">
+                        Log
+                    </label>
+                </div>
+                <div>
                     <button class="mb-3 btn btn-primary" type="button" data-toggle="collapse" 
                             data-target="#table_smartphone" aria-expanded="false" aria-controls="table_smartphone">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-table" viewBox="0 0 16 16">
@@ -181,10 +212,10 @@
                     <h5 class="card-title">Total de Smartphones por Modelo</h5>
                     <div class="row">
                         {% for model in qs_smartphone_models %}
-                        {% if model.s_model in qs_smartphone_filter_models %}
+                        {% if model in qs_smartphone_filter_models %}
                             <div class="col-md-4">
                                 <br>
-                                <h6><b>{{model.s_model}}</b></h6>
+                                <h6><b>{{model}}</b></h6>
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -193,13 +224,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for smartphone in qs_smartphone %}
-                                            {% if smartphone.s_model == model.s_model %}
+                                        {% for status, s_models in qs_smartphone.items %}
+                                        {% for s_model, value in s_models.items %}
+                                            {% if s_model == model %}
                                                 <tr>
-                                                    <td class="card-text">{{smartphone.status}}</td>
-                                                    <td class="card-text">{{smartphone.status_count}}</td>
+                                                    <td class="card-text">{{status}}</td>
+                                                    <td class="card-text">{{value}}</td>
                                                 </tr>
                                             {% endif %}
+                                        {% endfor %}
                                         {% endfor %}
                                     </tbody>
                                 </table>
@@ -258,7 +291,12 @@
             </div>
             <canvas id="chart_vivobox"></canvas>
             <div class="d-flex justify-content-between">
-                <div></div>
+                <div class="mt-2 ml-5">
+                    <input class="check-input" type="checkbox" value="" onchange="onToggleLogCheckbox(this)" id="check_box">
+                    <label class="check-label">
+                        Log
+                    </label>
+                </div>
                 <div class="justify-content-center">
                     <button class="mb-3 btn btn-primary" type="button" data-toggle="collapse" 
                             data-target="#table_vivobox" aria-expanded="false" aria-controls="table_vivobox">
@@ -350,7 +388,12 @@
             </div>
             <canvas id="chart_line"></canvas>
             <div class="d-flex justify-content-between">
-                <div></div>
+                <div class="mt-2 ml-5">
+                    <input class="check-input" type="checkbox" value="" onchange="onToggleLogCheckbox(this)" id="check_line">
+                    <label class="check-label">
+                        Log
+                    </label>
+                </div>
                 <div class="justify-content-center">
                     <button class="mb-3 btn btn-primary" type="button" data-toggle="collapse" 
                         data-target="#table_line" aria-expanded="false" aria-controls="table_line">

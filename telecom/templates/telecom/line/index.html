@@ -33,19 +33,25 @@
 <div class="collapse" id="table_line">
     <div class="card border-secondary px-3 py-3">
         <form class="form my-2" action="{% url 'line_search' %}">
-            <div class="form-group">
-                <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
-                        type="search" placeholder="Pesquisar" aria-label="Search">
-            </div>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="Nome" aria-label="Search">
+                </div>
+                <div class="form-group col-md-6">
+                    <input name="line" value="{{ request.GET.line }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="Número/Sim Card" aria-label="Search">
+                </div>
+            </div>      
             <div class="row">
                 <div class="form-group col-md-3">
                     <select name="filter_telecom" class="custom-select">
                         <option value="">Operadora</option>
-                        {% for line in qs_line_telecom %}
-                        {% if line.telecom == request.GET.filter_telecom %}
-                            <option selected value="{{line.telecom}}">{{line.telecom|title}}</option>
+                        {% for telecom in qs_line_telecom %}
+                        {% if telecom.name == request.GET.filter_telecom %}
+                            <option selected value="{{telecom}}">{{telecom}}</option>
                         {% else %}
-                            <option value="{{line.telecom}}">{{line.telecom|title}}</option>
+                            <option value="{{telecom}}">{{telecom}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -53,11 +59,11 @@
                 <div class="form-group col-md-3">
                     <select name="filter_plan" class="custom-select">
                         <option value="">Plano</option>
-                        {% for line in qs_line_plan %}
-                        {% if line.plan == request.GET.filter_plan %}
-                            <option selected value="{{line.plan}}">{{line.plan|title}}</option>
+                        {% for plan in qs_line_plan %}
+                        {% if plan.name == request.GET.filter_plan %}
+                            <option selected value="{{plan}}">{{plan}}</option>
                         {% else %}
-                            <option value="{{line.plan}}">{{line.plan|title}}</option>
+                            <option value="{{plan}}">{{plan}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -69,11 +75,11 @@
                 <div class="form-group col-md-3">
                     <select name="filter_status" class="custom-select">
                         <option value="">Status</option>
-                        {% for line in qs_line_status %}
-                        {% if line.status == request.GET.filter_status %}
-                            <option selected value="{{line.status}}">{{line.status|title}}</option>
+                        {% for status in qs_line_status %}
+                        {% if status.name == request.GET.filter_status %}
+                            <option selected value="{{status}}">{{status}}</option>
                         {% else %}
-                            <option value="{{line.status}}">{{line.status|title}}</option>
+                            <option value="{{status}}">{{status}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>

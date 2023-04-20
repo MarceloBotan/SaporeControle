@@ -1,9 +1,14 @@
 from django.forms import ModelForm
-from django import forms
+
 from .models import Line, Smartphone, VivoBox
 from .models import SmartModel, BoxModel, LinePlan
+from .models import LineStatus, LineStatusRFP, SmartStatus, BoxStatus
+
 from branch.models import Branch
-from django.utils import timezone
+
+################
+# Plano/Modelo #
+################
 
 class FormLinePlan(ModelForm):
     #Validar e alterar os campos do formulário
@@ -59,6 +64,86 @@ class FormBoxModel(ModelForm):
         model = BoxModel
         fields = ['name']
 
+##########
+# Status #
+##########
+
+class FormLineStatus(ModelForm):
+    #Validar e alterar os campos do formulário
+    def clean(self):
+        data = self.cleaned_data
+        name = data.get('name')
+
+        #Verifica campo Nome
+        if name == '-' or not name:
+            self.add_error(
+                'name',
+                'Preencha o campo Nome'
+            )
+    
+    #Define os campos a serem alterados
+    class Meta:
+        model = LineStatus
+        fields = ['name']
+
+class FormLineStatusRFP(ModelForm):
+    #Validar e alterar os campos do formulário
+    def clean(self):
+        data = self.cleaned_data
+        name = data.get('name')
+
+        #Verifica campo Nome
+        if name == '-' or not name:
+            self.add_error(
+                'name',
+                'Preencha o campo Nome'
+            )
+    
+    #Define os campos a serem alterados
+    class Meta:
+        model = LineStatusRFP
+        fields = ['name']
+
+class FormSmartStatus(ModelForm):
+    #Validar e alterar os campos do formulário
+    def clean(self):
+        data = self.cleaned_data
+        name = data.get('name')
+
+        #Verifica campo Nome
+        if name == '-' or not name:
+            self.add_error(
+                'name',
+                'Preencha o campo Nome'
+            )
+    
+    #Define os campos a serem alterados
+    class Meta:
+        model = SmartStatus
+        fields = ['name']
+
+class FormBoxStatus(ModelForm):
+    #Validar e alterar os campos do formulário
+    def clean(self):
+        data = self.cleaned_data
+        name = data.get('name')
+
+        #Verifica campo Nome
+        if name == '-' or not name:
+            self.add_error(
+                'name',
+                'Preencha o campo Nome'
+            )
+    
+    #Define os campos a serem alterados
+    class Meta:
+        model = BoxStatus
+        fields = ['name']
+
+#########
+# Linha #
+#########
+
 def validator_line(self, data):
     name = data.get('name')
     sim_card = data.get('sim_card')
@@ -66,13 +151,6 @@ def validator_line(self, data):
     branch = data.get('branch')
     name_mapped = data.get('name_mapped')
     branch_mapped = data.get('branch_mapped')
-
-    #Verifica campo Status
-    if status == '-':
-        self.add_error(
-            'status',
-            'Preencha o campo Status'
-        )
     
     #Valida Filial
     try:
@@ -90,7 +168,7 @@ def validator_line(self, data):
                 'Filial inválida'
             )
 
-    if status == 'ATIVO' or status == 'AGUARDANDO ENDERECO' or status == 'ATUALIZADO' or status == 'VIP':
+    if status.name != 'Disponivel':
         #Valida nome
         if name == '-' and name_mapped:
             self.add_error(
@@ -172,7 +250,7 @@ class FormAddLine(ModelForm):
     class Meta:
         model = Line
         fields = ['name', 'number', 'sim_card', 'plan', 'branch', 'receipt', \
-                   'status', 'vip', 'auth_attachment']
+                   'status', 'status_rfp', 'vip', 'auth_attachment']
 
 def validator_smartphone(self, data):
     name = data.get('name')
@@ -196,13 +274,6 @@ def validator_smartphone(self, data):
                 'Filial inválida'
             )
 
-    #Verifica campo Status
-    if status == '-':
-        self.add_error(
-            'status',
-            'Preencha o campo Status'
-        )
-    
     #Valida Linha
     if number != 0:
         try:
@@ -218,23 +289,18 @@ def validator_smartphone(self, data):
                 )
     
             #Verifica se a linha já possui colaborador associado
-            try:
-                smartphone = Smartphone.objects.get(number=number)
-                if (line.name != '-' and line.name != smartphone.name) or (line.branch and line.branch != branch):
-                    self.add_error(
-                        'number',
-                        'Número já associado a uma Filial ou um Colaborador'
-                    )
-            except:
-                pass
+            if (line.name != '-' and line.name) or (line.branch and line.branch != branch):
+                self.add_error(
+                    'number',
+                    'Número já associado a uma Filial ou um Colaborador'
+                )
         except:
             self.add_error(
                 'number',
                 'Número não existe na relação'
             )
 
-    if status == 'AGUARDANDO TERMO' or status == 'TERMO ASSINADO' or \
-        status == 'AGUARDANDO ENDERECO' or status == 'ENVIADO' or status == 'ENTREGUE': 
+    if status.name != 'Estoque':
         #Valida Nome
         if name == '-':
             self.add_error(
@@ -274,14 +340,14 @@ class FormAddSmartphone(ModelForm):
     def clean(self):
         data = self.cleaned_data
         imei_1 = data.get('imei_1')
-        s_model = data.get('s_model')
+        obj_model = data.get('obj_model')
 
         validator_smartphone(self, data)
 
         #Verifica se preencheu o campo Plano
-        if s_model == '-':
+        if obj_model == '-':
             self.add_error(
-                's_model',
+                'obj_model',
                 'Selecione um Modelo'
             )
         
@@ -305,7 +371,7 @@ class FormAddSmartphone(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Smartphone
-        fields = ['s_model', 'imei_1', 'imei_2', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
+        fields = ['obj_model', 'imei_1', 'imei_2', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
 
 def validator_vivobox(self, data):
     name = data.get('name')
@@ -328,13 +394,6 @@ def validator_vivobox(self, data):
                 'branch',
                 'Filial inválida'
             )
-
-    #Verifica campo Status
-    if status == '-':
-        self.add_error(
-            'status',
-            'Preencha o campo Status'
-        )
 
     #Valida Linha
     if number != 0:
@@ -360,8 +419,7 @@ def validator_vivobox(self, data):
                 'Número não existe na relação'
             )
 
-    if status == 'AGUARDANDO TERMO' or status == 'TERMO ASSINADO' or \
-        status == 'AGUARDANDO ENDERECO' or status == 'ENVIADO' or status == 'ENTREGUE':        
+    if status.name != 'Estoque':
         #Valida Nome
         if name == '-':
             self.add_error(
@@ -401,14 +459,14 @@ class FormAddVivoBox(ModelForm):
     def clean(self):
         data = self.cleaned_data
         imei_1 = data.get('imei_1')
-        v_model = data.get('v_model')
+        obj_model = data.get('obj_model')
 
         validator_vivobox(self, data)
 
         #Verifica se preencheu o campo Plano
-        if v_model == '-':
+        if obj_model == '-':
             self.add_error(
-                'v_model',
+                'obj_model',
                 'Selecione um Modelo'
             )
 
@@ -432,5 +490,5 @@ class FormAddVivoBox(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = VivoBox
-        fields = ['v_model', 'imei_1', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
+        fields = ['obj_model', 'imei_1', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
 

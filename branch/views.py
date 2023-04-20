@@ -56,6 +56,10 @@ class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        if not form.cleaned_data['file']:
+            messages.error(self.request, 'Campo vazio')
+            return redirect('branch_edit')
+
         with warnings.catch_warnings(record=True):
             warnings.simplefilter("always")
             df = pd.read_excel(form.cleaned_data['file'], usecols=('B,D,F,I,K'), engine='openpyxl')

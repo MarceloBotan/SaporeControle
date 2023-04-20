@@ -13,12 +13,14 @@ from django.utils import timezone
 
 from .forms import FormLine, FormAddLine, FormSmartphone, FormAddSmartphone, FormVivoBox, FormAddVivoBox
 from .forms import FormSmartModel, FormBoxModel, FormLinePlan
+from .forms import FormLineStatus, FormLineStatusRFP, FormSmartStatus, FormBoxStatus
 
 from django.core.exceptions import PermissionDenied
 
 from django.db.models import Q, Count
-from .models import Line, Smartphone, VivoBox, LinePlan
-from .models import SmartModel, BoxModel
+from .models import Line, Smartphone, VivoBox
+from .models import SmartModel, BoxModel, LinePlan
+from .models import LineStatus, LineStatusRFP, SmartStatus, BoxStatus, LineTelecom
 
 from itertools import chain
 from sapore_controle.settings import MEDIA_ROOT
@@ -73,12 +75,12 @@ def generate_csv(request, telecom_type, csv_simple):
             if csv_simple == 1:
                 sufix = 'simplificado_'
                 header = ([header] for header in smartphone_headers_simple)
-                rows = ([str(smartphone.s_model),str(smartphone.imei_1), str(smartphone.receipt), str(smartphone.name), 
+                rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.receipt), str(smartphone.name), 
                             str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
                             ] for smartphone in smartphones)
             else:
                 header = ([header] for header in smartphone_headers)
-                rows = ([str(smartphone.s_model),str(smartphone.imei_1), str(smartphone.imei_2),  str(smartphone.receipt), 
+                rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.imei_2),  str(smartphone.receipt), 
                             str(smartphone.name), str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
                             str(smartphone.date_update)] for smartphone in smartphones)
         case 'vivobox':
@@ -86,11 +88,11 @@ def generate_csv(request, telecom_type, csv_simple):
             if csv_simple == 1:
                 sufix = 'simplificado_'
                 header = ([header] for header in vivobox_headers_simple)
-                rows = ([str(vivobox.v_model),str(vivobox.imei_1), str(vivobox.name), str(vivobox.branch), 
+                rows = ([str(vivobox.obj_model),str(vivobox.imei_1), str(vivobox.name), str(vivobox.branch), 
                             str(vivobox.number), str(vivobox.status)] for vivobox in vivoboxs)
             else:
                 header = ([header] for header in vivobox_headers)
-                rows = ([str(vivobox.v_model),str(vivobox.imei_1),  str(vivobox.receipt), str(vivobox.name), 
+                rows = ([str(vivobox.obj_model),str(vivobox.imei_1),  str(vivobox.receipt), str(vivobox.name), 
                             str(vivobox.branch), str(vivobox.number), str(vivobox.status), 
                             str(vivobox.date_update)] for vivobox in vivoboxs)
 
@@ -108,7 +110,7 @@ def generate_csv(request, telecom_type, csv_simple):
 
 @login_required(redirect_field_name='login')
 def delete_model(request, telecom_type, model_id):
-    if 'sapore' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
+    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
         #Sobre erro 403 - Permissão Negada
         raise PermissionDenied()
 
@@ -140,6 +142,47 @@ def delete_model(request, telecom_type, model_id):
     return redirect('index')
 
 @login_required(redirect_field_name='login')
+def delete_status(request, telecom_type, status_id, rfp):
+    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
+        #Sobre erro 403 - Permissão Negada
+        raise PermissionDenied()
+
+    match telecom_type, rfp:
+        case 'vivobox', 0:
+            try:
+                box_status = BoxStatus.objects.get(id=status_id)
+                box_status.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('v_status_list')
+        
+        case 'smartphone', 0:
+            try:
+                smart_status = SmartStatus.objects.get(id=status_id)
+                smart_status.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('s_status_list')
+        
+        case 'line', 1:
+            try:
+                line_plan = LineStatusRFP.objects.get(id=status_id)
+                line_plan.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('line_status_rfp_list')
+        
+        case 'line', 0:
+            try:
+                line_plan = LineStatus.objects.get(id=status_id)
+                line_plan.delete()
+            except:
+                messages.error(request, 'Modelo não pode ser deletado')
+            return redirect('line_status_list')
+    
+    return redirect('index')
+
+@login_required(redirect_field_name='login')
 def index(request):
     if 'sapore_telecom' in request.user.groups.get().name:
         return redirect('dashboard')
@@ -162,179 +205,130 @@ class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        smartphone_status = (Smartphone.objects
-            .filter()
-            .values('status')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
+        def object_by_status_by_model(objects):
+            object_by_status_by_model = {}
+            for object in objects:
+                model_count = {}
+                try:
+                    model_name = object.obj_model.name
+                except:
+                    model_name = object.telecom.name
+                status_name = object.status.name
+                model_count[model_name] = object.status_count
+                if status_name not in object_by_status_by_model.keys():
+                    object_by_status_by_model[status_name] = model_count
+                    continue
+                object_by_status_by_model[status_name].update(model_count)
+            return object_by_status_by_model
+
+        def split_object(object, _objectmodels, _objectstatus, object_name):
+            object_status_count = []
+            object_models = []
+            object_status = []
+            object_filter_models = []
+            i = 0
+            for model in _objectmodels:
+                object_models.append(model.name)
+                model_status_count = []
+                has_filter = False
+                if len(list(self.request.GET)) > 0:
+                    if object_name in list(self.request.GET)[0]:
+                        print(list(self.request.GET))
+                        print(model.name)
+                        print(self.request.GET.get(object_name + model.name))
+                        has_filter = True
+                if self.request.GET.get(object_name + model.name) == 'on' or not has_filter:
+                    object_filter_models.append(model.name)
+
+                    for status in _objectstatus:
+                        if status.name not in object_status:
+                            object_status.append(status.name)
+                        if status.name in object.keys():
+                            if model.name in object[status.name].keys():
+                                model_status_count.append(object[status.name][model.name])
+                                continue
+                            model_status_count.append(0)
+                    object_status_count.append(model_status_count)
+                i += 1
+
+            if not object_filter_models:
+                object_filter_models = object_models
+            
+            return object_status_count, object_models, object_status, object_filter_models
+
+        smartphones = Smartphone.objects.raw(
+            'select sp.id, count(sp.id) as status_count \
+	            from telecom_smartphone sp \
+                group by sp.status_id, sp.obj_model_id'
         )
 
-        smartphone_models = (Smartphone.objects
-            .filter()
-            .values('s_model')
-            .annotate(s_model_count=Count('s_model'))
-            .order_by('s_model')
+        _smartmodels = SmartModel.objects.all()
+        _smartstatus = SmartStatus.objects.all()
+
+        smartphone_by_status_by_model = object_by_status_by_model(smartphones)
+
+        smartphone_status_count, smartphone_models, \
+            smartphone_status, smartphone_filter_models = split_object(
+                smartphone_by_status_by_model, 
+                _smartmodels,
+                _smartstatus,
+                'smartphone_')
+
+        vivoboxs = VivoBox.objects.raw(
+            'select vb.id, count(vb.id) as status_count \
+	            from telecom_vivobox vb \
+                group by vb.status_id, vb.obj_model_id'
         )
 
-        smartphones = Smartphone.objects \
-            .filter() \
-            .values('status', 's_model') \
-            .annotate(status_count=Count('status')) \
-            .order_by('status')
+        _boxmodels = BoxModel.objects.all()
+        _boxstatus = BoxStatus.objects.all()
 
-        smartphone_filter_models = []
-        smartphone_models_names = []
-        s_models = []
-        for s_model in smartphone_models:
-            smart_model = SmartModel.objects.get(id=s_model['s_model']).name
-            smartphone_models_names.append(smart_model)
-            if self.request.GET.get('smartphone_' + smart_model) == 'on':
-                smartphone_filter_models.append(smart_model)
-                s_models.append(smart_model)
+        vivobox_by_status_by_model = object_by_status_by_model(vivoboxs)
 
-        if not smartphone_filter_models:
-            for s_model in smartphone_models_names:
-                smart_model = s_model
-                smartphone_filter_models.append(smart_model)
-                s_models.append(smart_model)
+        vivobox_status_count, vivobox_models, \
+            vivobox_status, vivobox_filter_models = split_object(
+                vivobox_by_status_by_model,
+                _boxmodels,
+                _boxstatus,
+                'vivobox_'
+            )
 
-        s_model_count = []
-        for i in range(len(s_models)):
-            smartphone_model = []
-            for s in smartphone_status:
-                has_append_model = False
-                for smartphone in smartphones:
-                    if smartphone['status'].upper() != s['status'].upper():
-                        continue
-                    
-                    if SmartModel.objects.get(id=smartphone['s_model']).name == s_models[i]:
-                        smartphone_model.append(smartphone['status_count'])
-                        has_append_model = True
-                    
-                if not has_append_model:
-                    smartphone_model.append(0)
-            s_model_count.append(smartphone_model)
-        
-        line_status = (Line.objects
-            .filter()
-            .values('status')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
+        lines = Line.objects.raw(
+            'select l.id, count(l.id) as status_count \
+	            from telecom_line l \
+                group by l.status_id, l.telecom_id'
         )
 
-        line_telecom = (Line.objects
-            .filter()
-            .values('telecom')
-            .annotate(status_count=Count('telecom'))
-            .order_by('telecom')
-        )
+        _linetelecom = LineTelecom.objects.all()
+        _linestatus = LineStatus.objects.all()
 
-        lines = (Line.objects
-            .filter()
-            .values('status', 'telecom')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
-        )
+        line_by_status_by_model = object_by_status_by_model(lines)
 
-        filter_line_telecom = []
-        telecoms = []
-        for telecom in line_telecom:
-            if self.request.GET.get('line_telecom_' + telecom['telecom']) == 'on':
-                filter_line_telecom.append(telecom['telecom'])
-                telecoms.append(telecom['telecom'])
+        line_status_count, line_telecom, \
+            line_status, line_filter_telecom = split_object(
+                line_by_status_by_model,
+                _linetelecom,
+                _linestatus,
+                'line_telecom_'
+            )
 
-        if not filter_line_telecom:
-            for telecom in line_telecom:
-                filter_line_telecom.append(telecom['telecom'])
-                telecoms.append(telecom['telecom'].upper())
-
-        telecom_count = []
-        for i in range(len(telecoms)):
-            aux = []
-            for s in line_status:
-                has_append_aux = False
-                for line in lines:
-                    if line['status'].upper() != s['status'].upper():
-                        continue
-
-                    if line['telecom'].upper() == telecoms[i]:
-                        aux.append(line['status_count'])
-                        has_append_aux = True
-                    
-                if not has_append_aux:
-                    aux.append(0)
-            telecom_count.append(aux)
-        
-        vivobox_status = (VivoBox.objects
-            .filter()
-            .values('status')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
-        )
-
-        vivobox_models = (VivoBox.objects
-            .filter()
-            .values('v_model')
-            .annotate(status_count=Count('v_model'))
-            .order_by('v_model')
-        )
-
-        vivoboxs = (VivoBox.objects
-            .filter()
-            .values('status', 'v_model')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
-        )
-
-        vivobox_filter_models = []
-        vivobox_models_names = []
-        v_models = []
-        for v_model in vivobox_models:
-            box_model = BoxModel.objects.get(id=v_model['v_model']).name
-            vivobox_models_names.append(box_model)
-            if self.request.GET.get('vivobox_' + box_model) == 'on':
-                vivobox_filter_models.append(box_model)
-                v_models.append(box_model)
-
-        if not vivobox_filter_models:
-            for v_model in vivobox_models_names:
-                vivobox_filter_models.append(v_model)
-                v_models.append(v_model)
-
-        v_model_count = []
-        for i in range(len(v_models)):
-            vivobox_model = []
-            for v in vivobox_status:
-                has_append_model = False
-                for vivobox in vivoboxs:
-                    if vivobox['status'].upper() != v['status'].upper():
-                        continue
-                    
-                    if BoxModel.objects.get(id=vivobox['v_model']).name == v_models[i]:
-                        vivobox_model.append(vivobox['status_count'])
-                        has_append_model = True
-                    
-                if not has_append_model:
-                    vivobox_model.append(0)
-            v_model_count.append(vivobox_model)
-
-        context["qs_smartphone_status"] = list(smartphone_status)
-        context["qs_smartphone_models"] = smartphone_models_names
+        context["qs_smartphone_status"] = smartphone_status
+        context["qs_smartphone_models"] = smartphone_models
         context["qs_smartphone_filter_models"] = smartphone_filter_models
-        context["qs_smartphone_count"] = list(s_model_count)
-        context["qs_smartphone"] = list(smartphones)
+        context["qs_smartphone_count"] = smartphone_status_count
+        context["qs_smartphone"] = smartphone_by_status_by_model
 
-        context["qs_line_status"] = list(line_status)
-        context["qs_line_telecom"] = list(line_telecom)
-        context["qs_line_count"] = list(telecom_count)
-        context["qs_line_filter_telecom"] = filter_line_telecom
-        context["qs_line"] = lines
+        context["qs_line_status"] = line_status
+        context["qs_line_telecom"] = line_telecom
+        context["qs_line_count"] = line_status_count
+        context["qs_line_filter_telecom"] = line_filter_telecom
+        context["qs_line"] = line_by_status_by_model
 
-        context["qs_vivobox_status"] = list(vivobox_status)
-        context["qs_vivobox_models"] = vivobox_models_names
+        context["qs_vivobox_status"] = vivobox_status
+        context["qs_vivobox_models"] = vivobox_models
         context["qs_vivobox_filter_models"] = vivobox_filter_models
-        context["qs_vivobox_count"] = list(v_model_count)
-        context["qs_vivobox"] = list(vivoboxs)
+        context["qs_vivobox_count"] = vivobox_status_count
+        context["qs_vivobox"] = vivobox_by_status_by_model
 
         return context
 
@@ -400,12 +394,150 @@ class LinePlanAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     permission_required = 'telecom.add_lineplan'
 
     def form_valid(self, form):
-        smart_model, created = LinePlan.objects.get_or_create(**form.cleaned_data)
+        line_plan, created = LinePlan.objects.get_or_create(**form.cleaned_data)
         
         if created:
-            smart_model.save()
+            line_plan.save()
 
         return redirect('line_plan_list')
+
+##############
+# LineStatus #
+##############
+
+class LineStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = LineStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line/status_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_linestatus'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class LineStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = LineStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line/status_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormLineStatus
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_linestatus'
+
+    def form_valid(self, form):
+        line_status = self.get_object()
+        line_status.name = form.cleaned_data['name']
+
+        line_status.save()
+
+        return redirect('line_status_list')
+
+class LineStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = LineStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line/status_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormLineStatus
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_linestatus'
+
+    def form_valid(self, form):
+        line_status, created = LineStatus.objects.get_or_create(**form.cleaned_data)
+        
+        if created:
+            line_status.save()
+
+        return redirect('line_status_list')
+
+#################
+# LineStatusRFP #
+#################
+
+class LineStatusRFPList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = LineStatusRFP
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line/status_rfp_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_linestatusrfp'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class LineStatusRFPEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = LineStatusRFP
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line/status_rfp_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormLineStatusRFP
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_linestatusrfp'
+
+    def form_valid(self, form):
+        line_status_rfp = self.get_object()
+        line_status_rfp.name = form.cleaned_data['name']
+
+        line_status_rfp.save()
+
+        return redirect('line_status_rfp_list')
+
+class LineStatusRFPAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = LineStatusRFP
+    #Caminho do arquivo html
+    template_name = 'telecom/param/line/status_rfp_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormLineStatusRFP
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_linestatusrfp'
+
+    def form_valid(self, form):
+        line_status_rfp, created = LineStatusRFP.objects.get_or_create(**form.cleaned_data)
+        
+        if created:
+            line_status_rfp.save()
+
+        return redirect('line_status_rfp_list')
 
 ##############
 # SmartModel #
@@ -477,6 +609,75 @@ class SmartModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 
         return redirect('s_model_list')
 
+####################
+# SmartphoneStatus #
+####################
+
+class SmartStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = SmartStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/smartphone/status_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_smartstatus'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class SmartStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = SmartStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/smartphone/status_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormSmartStatus
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_smartstatus'
+
+    def form_valid(self, form):
+        smart_status = self.get_object()
+        smart_status.name = form.cleaned_data['name']
+
+        smart_status.save()
+
+        return redirect('s_status_list')
+
+class SmartStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = SmartStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/smartphone/status_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormSmartStatus
+
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_smartstatus'
+
+    def form_valid(self, form):
+        smart_status, created = SmartStatus.objects.get_or_create(**form.cleaned_data)
+        
+        if created:
+            smart_status.save()
+
+        return redirect('s_status_list')
+
 ############
 # BoxModel #
 ############
@@ -541,6 +742,70 @@ class BoxModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 
         return redirect('v_model_list')
 
+#############
+# BoxStatus #
+#############
+
+class BoxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = BoxStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/vivobox/status_list.html'
+    #Número de itens por página
+    paginate_by = 20
+    #Nome da variável do Model no html
+    context_object_name = 'objects'
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.view_boxstatus'
+
+    #Envia a Query ordenada para o HTML
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.order_by('name', '-id')
+        return qs
+
+class BoxStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = BoxStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/vivobox/status_edit.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormBoxStatus
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.change_boxstatus'
+
+    def form_valid(self, form):
+        box_status = self.get_object()
+        box_status.name = form.cleaned_data['name']
+
+        box_status.save()
+
+        return redirect('v_status_list')
+
+class BoxStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = BoxStatus
+    #Caminho do arquivo html
+    template_name = 'telecom/param/vivobox/status_add.html'
+    #Nome da variável do Model no html
+    context_object_name = 'object'
+    #Formulário para editar a linha
+    form_class = FormBoxStatus
+    #Redireciona caso não estiver logado
+    login_url = '/accounts/login/'
+    #Permissão para acessar a página
+    permission_required = 'telecom.add_boxstatus'
+
+    def form_valid(self, form):
+        box_status, created = BoxStatus.objects.get_or_create(**form.cleaned_data)
+        if created:
+            box_status.save()
+
+        return redirect('v_status_list')
+
 ##########
 # Linhas #
 ##########
@@ -571,30 +836,13 @@ class LineList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        line_telecom = (Line.objects
-            .filter()
-            .values('telecom')
-            .annotate(telecom_count=Count('telecom'))
-            .order_by('telecom')
-        )
+        line_telecom = LineTelecom.objects.all()
+        line_plan = LinePlan.objects.all()
+        line_status = LineStatus.objects.all()
 
-        line_plan = (Line.objects
-            .filter()
-            .values('plan')
-            .annotate(plan_count=Count('plan'))
-            .order_by('plan')
-        )
-
-        line_status = (Line.objects
-            .filter()
-            .values('status')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
-        )
-
-        context["qs_line_telecom"] = list(line_telecom)
-        context["qs_line_plan"] = list(line_plan)
-        context["qs_line_status"] = list(line_status)
+        context["qs_line_telecom"] = line_telecom
+        context["qs_line_plan"] = line_plan
+        context["qs_line_status"] = line_status
         return context
         
 #Herda as informações e ordenação da Query do LineList
@@ -605,33 +853,41 @@ class LineSearch(LineList):
     def get_queryset(self):
         qs = super().get_queryset()
         term = self.request.GET.get('term')
+        filter_line = self.request.GET.get('line')
         filter_telecom = self.request.GET.get('filter_telecom')
         filter_plan = self.request.GET.get('filter_plan')
         filter_branch = self.request.GET.get('filter_branch')
         filter_status = self.request.GET.get('filter_status')
    
         #Caso tenha filtro, adiciona na Query o filtro
+        if filter_line:
+            print(filter_line)
+            qs = qs.filter(
+                Q(number__contains=filter_line) | Q(sim_card__contains=filter_line) | Q(sim_card_old__contains=filter_line)
+            )
+        
+        #Caso tenha filtro, adiciona na Query o filtro
         if filter_telecom:
             qs = qs.filter(
-                Q(telecom__iexact=filter_telecom)
+                Q(telecom__exact=LineTelecom.objects.get(name=filter_telecom))
             )
    
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_plan:
             qs = qs.filter(
-                Q(plan__iexact=filter_plan)
+                Q(plan__exact=LinePlan.objects.get(name=filter_plan))
             )
    
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_status:
             qs = qs.filter(
-                Q(status__iexact=filter_status)
+                Q(status__exact=LineStatus.objects.get(name=filter_status))
             )
 
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_branch:
             qs = qs.filter(
-                Q(branch__iexact=filter_branch)
+                Q(branch__exact=filter_branch)
             )
 
         if not term:
@@ -639,8 +895,7 @@ class LineSearch(LineList):
 
         #Query com ordem, e busca
         qs = qs.filter(
-            Q(name__icontains=term) | Q(number__contains=term) | Q(telecom__icontains=term) | Q(plan__icontains=term) | \
-            Q(sim_card__contains=term) | Q(sim_card_old__contains=term) | Q(branch__contains=term)
+            Q(name__icontains=term)
         )
 
         return qs
@@ -751,11 +1006,11 @@ class LineAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         line_plan = line.plan.name.upper()
         
         if 'TIM' in line_plan:
-            line.telecom = 'TIM'
+            line.telecom, created = LineTelecom.objects.get_or_create(name='TIM')
         elif 'CLARO' in line_plan:
-            line.telecom = 'CLARO'
+            line.telecom, created = LineTelecom.objects.get_or_create(name='Claro')
         else:
-            line.telecom = 'VIVO'
+            line.telecom, created = LineTelecom.objects.get_or_create(name='Vivo')
 
         if (not line.name_mapped or not line.branch_mapped) and line.action == 'OK':
             line.action = 'MAPEAR'
@@ -789,29 +1044,19 @@ class SmartphoneList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        qs = qs.order_by('s_model', 'imei_1', '-id')
+        qs = qs.order_by('obj_model', 'imei_1', '-id')
 
         return qs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        smartphone_s_model = (Smartphone.objects
-            .filter()
-            .values('s_model')
-            .annotate(s_model_count=Count('s_model'))
-            .order_by('s_model')
-        )
+        smartphone_model = SmartModel.objects.all()
 
-        smartphone_status = (Smartphone.objects
-            .filter()
-            .values('status')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
-        )
+        smartphone_status = SmartStatus.objects.all()
 
-        context["qs_smartphone_status"] = list(smartphone_status)
-        context["qs_smartphone_s_model"] = list(smartphone_s_model)
+        context["qs_smartphone_status"] = smartphone_status
+        context["qs_smartphone_model"] = smartphone_model
         return context
 
 #Herda as informações e ordenação da Query do smartphoneList
@@ -822,26 +1067,40 @@ class SmartphoneSearch(SmartphoneList):
     def get_queryset(self):
         qs = super().get_queryset()
         term = self.request.GET.get('term')
-        filter_s_model = self.request.GET.get('filter_s_model')
+        filter_model = self.request.GET.get('filter_model')
         filter_branch = self.request.GET.get('filter_branch')
         filter_status = self.request.GET.get('filter_status')
+        filter_imei = self.request.GET.get('filter_imei')
+        filter_line = self.request.GET.get('filter_line')
    
         #Caso tenha filtro, adiciona na Query o filtro
-        if filter_s_model:
+        if filter_line:
             qs = qs.filter(
-                Q(s_model__iexact=filter_s_model)
+                Q(number__contains=filter_line)
+            )
+   
+        #Caso tenha filtro, adiciona na Query o filtro
+        if filter_imei:
+            qs = qs.filter(
+                Q(imei_1__contains=filter_imei) | Q(imei_2__contains=filter_imei)
+            )
+   
+        #Caso tenha filtro, adiciona na Query o filtro
+        if filter_model:
+            qs = qs.filter(
+                Q(obj_model__exact=SmartModel.objects.get(name=filter_model))
             )
    
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_status:
             qs = qs.filter(
-                Q(status__iexact=filter_status)
+                Q(status__exact=SmartStatus.objects.get(name=filter_status))
             )
 
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_branch:
             qs = qs.filter(
-                Q(branch__iexact=filter_status)
+                Q(branch__iexact=filter_branch)
             )
 
         if not term:
@@ -849,8 +1108,7 @@ class SmartphoneSearch(SmartphoneList):
 
         #Query com ordem, e busca
         qs = qs.filter(
-            Q(name__icontains=term) | Q(number__contains=term) | Q(imei_1__contains=term) | Q(imei_2__contains=term) | \
-            Q(s_model__contains=term) | Q(branch__contains=term)
+            Q(name__icontains=term)
         )
 
         return qs
@@ -913,7 +1171,7 @@ class SmartphoneEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
             line_old = Line.objects.get(number=smartphone.number)
             line_old.name = '-'
             line_old.branch = 0
-            line_old.status = 'DISPONIVEL'
+            line_old.status, created = LineStatus.objects.get_or_create(name='Disponivel')
             line_old.date_update = timezone.now()
             line_old.save()
         except:
@@ -925,14 +1183,18 @@ class SmartphoneEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         try:
             line = Line.objects.get(number=form.cleaned_data['number'])
             line.name = form.cleaned_data['name']
-            line.branch = form.cleaned_data['branch']
 
-            line.status = 'ATIVO'
+            if form.cleaned_data['branch'] != 0:
+                line.branch = form.cleaned_data['branch']
+
+            line.status, created = LineStatus.objects.get_or_create(name='Ativo')
             line.date_update = timezone.now()
+            
             line.save()
+
+            smartphone.line_id = line.id
         except:
             pass
-
         smartphone.save()
 
         return redirect('smartphone_details', pk=smartphone.id)
@@ -959,10 +1221,15 @@ class SmartphoneAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         try:
             line = Line.objects.get(number=form.cleaned_data['number'])
             line.name = form.cleaned_data['name']
-            line.branch = form.cleaned_data['branch']
-            line.status = 'ATIVO'
+            if form.cleaned_data['branch'] != 0:
+                line.branch = form.cleaned_data['branch']
+
+            line.status, created = LineStatus.objects.get_or_create(name='Ativo')
             line.date_update = timezone.now()
+
             line.save()
+            
+            smartphone.line_id = line.id
         except:
             pass
 
@@ -970,7 +1237,6 @@ class SmartphoneAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         smartphone.save()
 
         return redirect('smartphone_list')
-
 
 ##############
 # VivoBox #
@@ -995,29 +1261,19 @@ class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_queryset(self):
         qs = super().get_queryset()
 
-        qs = qs.order_by('v_model', 'imei_1', '-id')
+        qs = qs.order_by('obj_model', 'imei_1', '-id')
 
         return qs
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        vivobox_v_model = (VivoBox.objects
-            .filter()
-            .values('v_model')
-            .annotate(v_model_count=Count('v_model'))
-            .order_by('v_model')
-        )
+        vivobox_model = BoxModel.objects.all()
 
-        vivobox_status = (VivoBox.objects
-            .filter()
-            .values('status')
-            .annotate(status_count=Count('status'))
-            .order_by('status')
-        )
+        vivobox_status = BoxStatus.objects.all()
 
-        context["qs_vivobox_status"] = list(vivobox_status)
-        context["qs_vivobox_v_model"] = list(vivobox_v_model)
+        context["qs_vivobox_status"] = vivobox_status
+        context["qs_vivobox_model"] = vivobox_model
         return context
 
 #Herda as informações e ordenação da Query do vivoboxList
@@ -1030,18 +1286,32 @@ class VivoBoxSearch(VivoBoxList):
         term = self.request.GET.get('term')
         filter_branch = self.request.GET.get('filter_branch')
         filter_status = self.request.GET.get('filter_status')
-        filter_v_model = self.request.GET.get('filter_v_model')
+        filter_model = self.request.GET.get('filter_model')
+        filter_imei = self.request.GET.get('filter_imei')
+        filter_line = self.request.GET.get('filter_line')
    
         #Caso tenha filtro, adiciona na Query o filtro
-        if filter_v_model:
+        if filter_line:
             qs = qs.filter(
-                Q(v_model__iexact=filter_v_model)
+                Q(number__contains=filter_line)
+            )
+   
+        #Caso tenha filtro, adiciona na Query o filtro
+        if filter_imei:
+            qs = qs.filter(
+                Q(imei_1__contains=filter_imei)
+            )
+   
+        #Caso tenha filtro, adiciona na Query o filtro
+        if filter_model:
+            qs = qs.filter(
+                Q(obj_model__exact=BoxModel.objects.get(name=filter_model))
             )
    
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_status:
             qs = qs.filter(
-                Q(status__iexact=filter_status)
+                Q(status__exact=BoxStatus.objects.get(name=filter_status))
             )
 
         #Caso tenha filtro, adiciona na Query o filtro
@@ -1055,8 +1325,7 @@ class VivoBoxSearch(VivoBoxList):
 
         #Query com ordem, e busca
         qs = qs.filter(
-            Q(name__icontains=term) | Q(number__contains=term) | Q(imei_1__contains=term) | \
-            Q(v_model__contains=term) | Q(branch__contains=term)
+            Q(name__icontains=term)
         )
 
         return qs
@@ -1116,7 +1385,7 @@ class VivoBoxEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
             line_old = Line.objects.get(number=vivobox.number)
             line_old.name = '-'
             line_old.branch = 0
-            line_old.status = 'DISPONIVEL'
+            line_old.status, created = LineStatus.objects.get_or_create(name='Disponivel')
             line_old.date_update = timezone.now()
             line_old.save()
         except:
@@ -1128,15 +1397,17 @@ class VivoBoxEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         try:
             line = Line.objects.get(number=form.cleaned_data['number'])
             line.name = form.cleaned_data['name']
-            line.branch = form.cleaned_data['branch']
-            line.status = 'ATIVO'
+            if form.cleaned_data['branch'] != 0:
+                line.branch = form.cleaned_data['branch']
+            line.status, created = LineStatus.objects.get_or_create(name='Ativo')
             line.date_update = timezone.now()
+
             line.save()
+            vivobox.line_id = line.id
         except:
             pass
 
         vivobox.save()
-
         return redirect('vivobox_details', pk=vivobox.id)
 
 class VivoBoxAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
@@ -1161,10 +1432,14 @@ class VivoBoxAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         try:
             line = Line.objects.get(number=form.cleaned_data['number'])
             line.name = form.cleaned_data['name']
-            line.branch = form.cleaned_data['branch']
-            line.status = 'ATIVO'
+            if form.cleaned_data['branch'] != 0:
+                line.branch = form.cleaned_data['branch']
+
+            line.status, created = LineStatus.objects.get_or_create(name='Ativo')
             line.date_update = timezone.now()
+
             line.save()
+            vivobox.line_id = line.id
         except:
             pass
 

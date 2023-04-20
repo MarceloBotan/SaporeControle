@@ -33,35 +33,45 @@
 <div class="collapse" id="table_vivobox">
     <div class="card border-secondary px-3 py-3">
         <form class="form my-2" action="{% url 'vivobox_search' %}">
-            <div class="form-group">
-                <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
-                        type="search" placeholder="Pesquisar" aria-label="Search">
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="Nome" aria-label="Search">
+                </div>
+                <div class="form-group col-md-6">
+                    <input name="filter_line" value="{{ request.GET.filter_line }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="Número" aria-label="Search">
+                </div>
             </div>
             <div class="row">
-                <div class="form-group col-md-4">
-                    <select name="filter_v_model" class="custom-select">
+                <div class="form-group col-md-3">
+                    <select name="filter_model" class="custom-select">
                         <option value="">Modelo</option>
-                        {% for vivobox in qs_vivobox_v_model %}
-                        {% if vivobox.v_model == request.GET.filter_v_model %}
-                            <option selected value="{{vivobox.v_model}}">{{vivobox.v_model}}</option>
+                        {% for model in qs_vivobox_model %}
+                        {% if model.name == request.GET.filter_model %}
+                            <option selected value="{{model}}">{{model}}</option>
                         {% else %}
-                            <option value="{{vivobox.v_model}}">{{vivobox.v_model}}</option>
+                            <option value="{{model}}">{{model}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
+                    <input name="filter_imei" value="{{ request.GET.filter_imei }}" class="form-control mr-sm-2" 
+                            type="search" placeholder="IMEI" aria-label="Search">
+                </div>
+                <div class="form-group col-md-3">
                     <input name="filter_branch" value="{{ request.GET.filter_branch }}" class="form-control mr-sm-2" 
                         type="search" placeholder="Filial" aria-label="Search">
                 </div>
-                <div class="form-group col-md-4">
+                <div class="form-group col-md-3">
                     <select name="filter_status" class="custom-select">
                         <option value="">Status</option>
-                        {% for vivobox in qs_vivobox_status %}
-                        {% if vivobox.status == request.GET.filter_status %}
-                            <option selected value="{{vivobox.status}}">{{vivobox.status|title}}</option>
+                        {% for status in qs_vivobox_status %}
+                        {% if status.name == request.GET.filter_status %}
+                            <option selected value="{{status}}">{{status|title}}</option>
                         {% else %}
-                            <option value="{{vivobox.status}}">{{vivobox.status|title}}</option>
+                            <option value="{{status}}">{{status|title}}</option>
                         {% endif %}
                         {% endfor %}
                     </select>
@@ -95,7 +105,7 @@
         <tbody>
             {% for vivobox in vivoboxs %}
                 <tr>
-                    <td>{{vivobox.v_model}}</td>
+                    <td>{{vivobox.obj_model}}</td>
                     <td><a href="{% url 'vivobox_details' vivobox.id %}">{{vivobox.imei_1}}</a></td>
                     <td>{{vivobox.name}}</td>
                     <td>{{vivobox.branch}}</td>

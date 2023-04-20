@@ -7,14 +7,14 @@ class LineAdmin(admin.ModelAdmin):
     list_filter = ('telecom',)
 
 class SmartphoneAdmin(admin.ModelAdmin):
-    list_display = ('s_model', 'imei_1', 'name',)
-    list_display_links = ('s_model',)
-    list_filter = ('s_model',)
+    list_display = ('obj_model', 'imei_1', 'name',)
+    list_display_links = ('obj_model',)
+    list_filter = ('obj_model',)
 
 class VivoBoxAdmin(admin.ModelAdmin):
-    list_display = ('v_model', 'imei_1', 'name',)
-    list_display_links = ('v_model',)
-    list_filter = ('v_model',)
+    list_display = ('obj_model', 'imei_1', 'name',)
+    list_display_links = ('obj_model',)
+    list_filter = ('obj_model',)
 
 admin.site.register(Line, LineAdmin)
 admin.site.register(Smartphone, SmartphoneAdmin)
