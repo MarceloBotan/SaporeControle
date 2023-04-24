@@ -55,46 +55,45 @@ def generate_csv(request, telecom_type, csv_simple):
     sufix = ''
     prefix = ''
 
-    match [telecom_type]:
-        case 'line':
-            prefix = 'linhas_'
-            if csv_simple == 1:
-                sufix = 'simplificado_'
-                header = ([header] for header in line_headers_simple)
+    if telecom_type == 'line':
+        prefix = 'linhas_'
+        if csv_simple == 1:
+            sufix = 'simplificado_'
+            header = ([header] for header in line_headers_simple)
 
-                rows = ([str(line.number), str(line.telecom), str(line.plan), str(line.name), 
-                            str(line.branch), str(line.status)] for line in lines)
-            else:
-                header = ([header] for header in line_headers)
+            rows = ([str(line.number), str(line.telecom), str(line.plan), str(line.name), 
+                        str(line.branch), str(line.status)] for line in lines)
+        else:
+            header = ([header] for header in line_headers)
 
-                rows = ([str(line.number), str(line.sim_card + "'"), str(line.sim_card_old + "'"), str(line.telecom), 
-                            str(line.plan), str(line.receipt), str(line.name), str(line.branch), 
-                            str(line.status), str(line.date_update)] for line in lines)
-        case 'smartphone':
-            prefix = 'smartphones_'
-            if csv_simple == 1:
-                sufix = 'simplificado_'
-                header = ([header] for header in smartphone_headers_simple)
-                rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.receipt), str(smartphone.name), 
-                            str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
-                            ] for smartphone in smartphones)
-            else:
-                header = ([header] for header in smartphone_headers)
-                rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.imei_2),  str(smartphone.receipt), 
-                            str(smartphone.name), str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
-                            str(smartphone.date_update)] for smartphone in smartphones)
-        case 'vivobox':
-            prefix = 'vivobox_'
-            if csv_simple == 1:
-                sufix = 'simplificado_'
-                header = ([header] for header in vivobox_headers_simple)
-                rows = ([str(vivobox.obj_model),str(vivobox.imei_1), str(vivobox.name), str(vivobox.branch), 
-                            str(vivobox.number), str(vivobox.status)] for vivobox in vivoboxs)
-            else:
-                header = ([header] for header in vivobox_headers)
-                rows = ([str(vivobox.obj_model),str(vivobox.imei_1),  str(vivobox.receipt), str(vivobox.name), 
-                            str(vivobox.branch), str(vivobox.number), str(vivobox.status), 
-                            str(vivobox.date_update)] for vivobox in vivoboxs)
+            rows = ([str(line.number), str(line.sim_card + "'"), str(line.sim_card_old + "'"), str(line.telecom), 
+                        str(line.plan), str(line.receipt), str(line.name), str(line.branch), 
+                        str(line.status), str(line.date_update)] for line in lines)
+    elif telecom_type == 'smartphone':
+        prefix = 'smartphones_'
+        if csv_simple == 1:
+            sufix = 'simplificado_'
+            header = ([header] for header in smartphone_headers_simple)
+            rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.receipt), str(smartphone.name), 
+                        str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
+                        ] for smartphone in smartphones)
+        else:
+            header = ([header] for header in smartphone_headers)
+            rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.imei_2),  str(smartphone.receipt), 
+                        str(smartphone.name), str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
+                        str(smartphone.date_update)] for smartphone in smartphones)
+    elif telecom_type == 'vivobox':
+        prefix = 'vivobox_'
+        if csv_simple == 1:
+            sufix = 'simplificado_'
+            header = ([header] for header in vivobox_headers_simple)
+            rows = ([str(vivobox.obj_model),str(vivobox.imei_1), str(vivobox.name), str(vivobox.branch), 
+                        str(vivobox.number), str(vivobox.status)] for vivobox in vivoboxs)
+        else:
+            header = ([header] for header in vivobox_headers)
+            rows = ([str(vivobox.obj_model),str(vivobox.imei_1),  str(vivobox.receipt), str(vivobox.name), 
+                        str(vivobox.branch), str(vivobox.number), str(vivobox.status), 
+                        str(vivobox.date_update)] for vivobox in vivoboxs)
 
     result = chain(header, rows)
 
@@ -114,30 +113,29 @@ def delete_model(request, telecom_type, model_id):
         #Sobre erro 403 - Permissão Negada
         raise PermissionDenied()
 
-    match telecom_type:
-        case 'vivobox':
-            try:
-                box_model = BoxModel.objects.get(id=model_id)
-                box_model.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('v_model_list')
+    if telecom_type == 'vivobox':
+        try:
+            box_model = BoxModel.objects.get(id=model_id)
+            box_model.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('v_model_list')
+    
+    elif telecom_type == 'smartphone':
+        try:
+            smart_model = SmartModel.objects.get(id=model_id)
+            smart_model.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('s_model_list')
         
-        case 'smartphone':
-            try:
-                smart_model = SmartModel.objects.get(id=model_id)
-                smart_model.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('s_model_list')
-        
-        case 'line':
-            try:
-                line_plan = LinePlan.objects.get(id=model_id)
-                line_plan.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('line_plan_list')
+    elif telecom_type == 'line':
+        try:
+            line_plan = LinePlan.objects.get(id=model_id)
+            line_plan.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('line_plan_list')
     
     return redirect('index')
 
@@ -147,39 +145,38 @@ def delete_status(request, telecom_type, status_id, rfp):
         #Sobre erro 403 - Permissão Negada
         raise PermissionDenied()
 
-    match telecom_type, rfp:
-        case 'vivobox', 0:
-            try:
-                box_status = BoxStatus.objects.get(id=status_id)
-                box_status.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('v_status_list')
-        
-        case 'smartphone', 0:
-            try:
-                smart_status = SmartStatus.objects.get(id=status_id)
-                smart_status.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('s_status_list')
-        
-        case 'line', 1:
-            try:
-                line_plan = LineStatusRFP.objects.get(id=status_id)
-                line_plan.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('line_status_rfp_list')
-        
-        case 'line', 0:
-            try:
-                line_plan = LineStatus.objects.get(id=status_id)
-                line_plan.delete()
-            except:
-                messages.error(request, 'Modelo não pode ser deletado')
-            return redirect('line_status_list')
+    if telecom_type == 'vivobox':
+        try:
+            box_status = BoxStatus.objects.get(id=status_id)
+            box_status.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('v_status_list')
     
+    elif telecom_type == 'smartphone':
+        try:
+            smart_status = SmartStatus.objects.get(id=status_id)
+            smart_status.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('s_status_list')
+    
+    elif telecom_type == 'line' and rfp == 1:
+        try:
+            line_plan = LineStatusRFP.objects.get(id=status_id)
+            line_plan.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('line_status_rfp_list')
+    
+    elif telecom_type == 'line':
+        try:
+            line_plan = LineStatus.objects.get(id=status_id)
+            line_plan.delete()
+        except:
+            messages.error(request, 'Modelo não pode ser deletado')
+        return redirect('line_status_list')
+
     return redirect('index')
 
 @login_required(redirect_field_name='login')
