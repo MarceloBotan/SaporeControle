@@ -69,7 +69,7 @@ def login(request):
     auth.login(request, user_authenticated)
     login_tries = {}
     tries = 1
-    return redirect('dashboard')
+    return redirect('index')
 
 @receiver(auth.user_logged_in)
 def remove_other_sessions(sender, user, request, **kwargs):

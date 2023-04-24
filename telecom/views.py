@@ -183,7 +183,7 @@ def delete_status(request, telecom_type, status_id, rfp):
 def index(request):
     if 'sapore_telecom' in request.user.groups.get().name:
         return redirect('dashboard')
-    if 'tg_' in request.user.groups.get().name:
+    elif 'tg_' in request.user.groups.get().name:
         return redirect('line_list')
     return render(request, 'telecom/index.html')
 
