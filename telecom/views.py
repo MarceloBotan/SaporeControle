@@ -34,7 +34,7 @@ class Echo:
 @login_required(redirect_field_name='login')
 def generate_csv(request, telecom_type, csv_simple):
     if not request.user.has_perm('telecom.view_' + telecom_type):
-        #Sobre erro 403 - Permissão Negada
+        #Sobe erro 403 - Permissão Negada
         raise PermissionDenied()
     
     lines = Line.objects.all()
@@ -55,7 +55,7 @@ def generate_csv(request, telecom_type, csv_simple):
     sufix = ''
     prefix = ''
 
-    match telecom_type:
+    match [telecom_type]:
         case 'line':
             prefix = 'linhas_'
             if csv_simple == 1:
