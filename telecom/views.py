@@ -370,6 +370,7 @@ class LinePlanEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         line_plan = self.get_object()
         line_plan.name = form.cleaned_data['name']
+        line_plan.plan_type = form.cleaned_data['plan_type']
 
         line_plan.save()
 
