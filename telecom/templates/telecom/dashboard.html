@@ -312,10 +312,10 @@
                     <h5 class="card-title">Total de VivoBox por Modelo</h5>
                     <div class="row">
                         {% for model in qs_vivobox_models %}
-                        {% if model.v_model in qs_vivobox_filter_models %}
+                        {% if model in qs_vivobox_filter_models %}
                             <div class="col-md-4">
                                 <br>
-                                <h6><b>{{model.v_model}}</b></h6>
+                                <h6><b>{{model}}</b></h6>
                                 <table class="table">
                                     <thead>
                                         <tr>
@@ -324,13 +324,15 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {% for vivobox in qs_vivobox %}
-                                            {% if vivobox.v_model == model.v_model %}
+                                        {% for status, v_models in qs_vivobox.items %}
+                                        {% for v_model, value in v_models.items %}
+                                            {% if v_model == model %}
                                                 <tr>
-                                                    <td class="card-text">{{vivobox.status}}</td>
-                                                    <td class="card-text">{{vivobox.status_count}}</td>
+                                                    <td class="card-text">{{status}}</td>
+                                                    <td class="card-text">{{value}}</td>
                                                 </tr>
                                             {% endif %}
+                                        {% endfor %}
                                         {% endfor %}
                                     </tbody>
                                 </table>
@@ -409,10 +411,10 @@
                     <h5 class="card-title">Total de Linhas por Operadora</h5>
                     <div class="row">
                         {% for telecom in qs_line_telecom %}
-                        {% if telecom.telecom in qs_line_filter_telecom %}
+                        {% if telecom in qs_line_filter_telecom %}
                         <div class="col-md-4">
                             <br>
-                            <h6><b>{{telecom.telecom}}</b></h6>
+                            <h6><b>{{telecom}}</b></h6>
                             <table class="table">
                                 <thead>
                                     <tr>
@@ -421,13 +423,15 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for line in qs_line %}
-                                    {% if line.telecom == telecom.telecom %}
+                                    {% for status, qs_telecoms in qs_line.items %}
+                                    {% for qs_telecom, value in qs_telecoms.items %}
+                                    {% if qs_telecom == telecom %}
                                         <tr>
-                                            <td class="card-text">{{line.status}}</td>
-                                            <td class="card-text">{{line.status_count}}</td>
+                                            <td class="card-text">{{status}}</td>
+                                            <td class="card-text">{{value}}</td>
                                         </tr>
                                     {% endif %}
+                                    {% endfor %}
                                     {% endfor %}
                                 </tbody>
                             </table>
