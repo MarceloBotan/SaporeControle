@@ -1,29 +1,9 @@
 {% load static %}
-
-<style>
-    .dropdown-submenu{
-        position: relative;
-    }
-    .dropdown-submenu a::after{
-        transform: rotate(-90deg);
-        position: absolute;
-        right: 3px;
-        top: 40%;
-    }
-    .dropdown-submenu:hover .dropdown-menu, .dropdown-submenu:focus .dropdown-menu{
-        display: flex;
-        flex-direction: column;
-        position: absolute !important;
-        margin-top: -30px;
-        left: 100%;
-    }
-</style>
-
-<nav class="navbar navbar-expand-lg navbar-dark static-top" style="background-color: #ac0e14;">
+<nav class="navbar navbar-expand-lg navbar-dark static-top" id="navBar">
     <div class="container">
         <a class="navbar-brand" aria-label="Home" href="{% url 'index' %}">
             <img src="{% static 'img/logo_sapore.png' %}" 
-                    style="width: 102px; height: 30px;" alt="">
+                    id="logoSapore" alt="">
         </a>
         {% if 'accounts' not in request.path %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
