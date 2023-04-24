@@ -230,9 +230,6 @@ class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
                 has_filter = False
                 if len(list(self.request.GET)) > 0:
                     if object_name in list(self.request.GET)[0]:
-                        print(list(self.request.GET))
-                        print(model.name)
-                        print(self.request.GET.get(object_name + model.name))
                         has_filter = True
                 if self.request.GET.get(object_name + model.name) == 'on' or not has_filter:
                     object_filter_models.append(model.name)
@@ -309,6 +306,9 @@ class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
                 'line_telecom_'
             )
 
+        print(line_status, line_telecom, line_filter_telecom, line_status_count, line_by_status_by_model)
+        # print(smartphone_status, smartphone_models, smartphone_filter_models, smartphone_status_count, smartphone_by_status_by_model)
+
         context["qs_smartphone_status"] = smartphone_status
         context["qs_smartphone_models"] = smartphone_models
         context["qs_smartphone_filter_models"] = smartphone_filter_models
@@ -317,8 +317,8 @@ class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
 
         context["qs_line_status"] = line_status
         context["qs_line_telecom"] = line_telecom
-        context["qs_line_count"] = line_status_count
         context["qs_line_filter_telecom"] = line_filter_telecom
+        context["qs_line_count"] = line_status_count
         context["qs_line"] = line_by_status_by_model
 
         context["qs_vivobox_status"] = vivobox_status

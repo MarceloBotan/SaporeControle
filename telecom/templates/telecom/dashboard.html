@@ -73,7 +73,13 @@
         }
     }
 
-    function config_chart(log, label, data_key, labels, ...args){
+    function config_chart(log, label, labels, ...args){
+        var unpacked_args = [];
+
+        for(i=0; i<args[0].length; i++){
+            unpacked_args[i] = args[0][i];
+        };
+
         function dataset(_args){
             dataset = []
             for (i=0;i<_args.length;i++){
@@ -91,7 +97,7 @@
             type: 'bar',
             data: {
                 labels: labels,
-                datasets: dataset(args),
+                datasets: dataset(unpacked_args),
             },
             options: {
                 responsive: true,
@@ -105,11 +111,10 @@
         };
     };
 
-    function create_dash(labels, label_legend, element, log_checkbox){
+    function create_dash(labels, label_legend, element, log_checkbox, ...args){
         ctx = document.getElementById(element).getContext('2d');
         log_checkbox = document.getElementById(log_checkbox).checked;
-        return new Chart(ctx, config_chart(log_checkbox, label_legend, 'status_count', labels, 
-            {%for smartphone_count in qs_smartphone_count%}{{smartphone_count}},{%endfor%}));
+        return new Chart(ctx, config_chart(log_checkbox, label_legend, labels, args));
     };
 
     function chartOptions(log){
@@ -130,13 +135,13 @@
 
     $(document).ready(function(){
         dash_smart = create_dash({{qs_smartphone_status|safe}}, {{qs_smartphone_filter_models|safe}}, 
-            'chart_smartphone', 'check_smart');
+            'chart_smartphone', 'check_smart'{%for count in qs_smartphone_count%}, {{count}}{%endfor%});
 
         dash_line = create_dash({{qs_line_status|safe}}, {{qs_line_filter_telecom|safe}}, 
-            'chart_line', 'check_line');
+            'chart_line', 'check_line'{%for count in qs_line_count%}, {{count}}{%endfor%});
 
         dash_box = create_dash({{qs_vivobox_status|safe}}, {{qs_vivobox_filter_models|safe}}, 
-            'chart_vivobox', 'check_box');
+            'chart_vivobox', 'check_box'{%for count in qs_vivobox_count%}, {{count}}{%endfor%});
     });
 </script>
 {% endblock %}
@@ -357,14 +362,14 @@
                     <div class="card border-secondary px-3 py-3">
                         <form class="form my-2">
                         <h6><b>Operadora</b></h6>
-                        {% for line in qs_line_telecom %}
+                        {% for telecom in qs_line_telecom %}
                         <div>
-                            {% if not line.telecom in qs_line_filter_telecom %}
-                            <input name="line_telecom_{{line.telecom}}" id="line_telecom_{{line.telecom}}" type="checkbox">
+                            {% if not telecom in qs_line_filter_telecom %}
+                            <input name="line_telecom_{{telecom}}" id="line_telecom_{{telecom}}" type="checkbox">
                             {% else %}
-                            <input name="line_telecom_{{line.telecom}}" id="line_telecom_{{line.telecom}}" type="checkbox" checked>
+                            <input name="line_telecom_{{telecom}}" id="line_telecom_{{telecom}}" type="checkbox" checked>
                             {% endif %}
-                            <label for="line_telecom_{{line.telecom}}"> {{line.telecom}}</label>
+                            <label for="line_telecom_{{telecom}}"> {{telecom}}</label>
                         </div>
                         {% endfor %}
                         <div class="d-flex justify-content-between">
