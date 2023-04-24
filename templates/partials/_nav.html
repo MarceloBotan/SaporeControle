@@ -17,59 +17,50 @@
         margin-top: -30px;
         left: 100%;
     }
-
-    /*@media (max-width: 992px) {
-        .dropdown-menu{
-            width: 50%;
-        }
-        .dropdown-menu .dropdown-submenu{
-            width: auto;
-        }
-    }*/
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-dark static-top" style="background-color: #ac0e14;">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'index' %}">
+        <a class="navbar-brand" aria-label="Home" href="{% url 'index' %}">
             <img src="{% static 'img/logo_sapore.png' %}" 
                     style="width: 102px; height: 30px;" alt="">
         </a>
         {% if 'accounts' not in request.path %}
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                aria-controls="navbarResponsive" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
                         Parâmetros</a>
                     <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="{% url 'branch_list' %}">Filiais</a>
+                        <li><a class="dropdown-item" href="{% url 'branch_list' %}">Filiais</a></li>
                         <li class="dropdown-submenu">
                             <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
                                 Linhas</a>
                             <ul class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'line_plan_list' %}">Planos</a>
-                                <a class="dropdown-item" href="{% url 'line_status_list' %}">Status</a>
-                                <a class="dropdown-item" href="{% url 'line_status_rfp_list' %}">Status RFP</a>
+                                <li><a class="dropdown-item" href="{% url 'line_plan_list' %}">Planos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'line_status_list' %}">Status</a></li>
+                                <li><a class="dropdown-item" href="{% url 'line_status_rfp_list' %}">Status RFP</a></li>
                             </ul>
                         </li>
                         <li class="dropdown-submenu">
                             <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
                                 Smartphones</a>
                             <ul class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 's_model_list' %}">Modelos</a>
-                                <a class="dropdown-item" href="{% url 's_status_list' %}">Status</a>
+                                <li><a class="dropdown-item" href="{% url 's_model_list' %}">Modelos</a></li>
+                                <li><a class="dropdown-item" href="{% url 's_status_list' %}">Status</a></li>
                             </ul>
                         </li>
                         <li class="dropdown-submenu">
                             <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
                                 Vivobox</a>
                             <ul class="dropdown-menu">
-                                <a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos</a>
-                                <a class="dropdown-item" href="{% url 'v_status_list' %}">Status</a>
+                                <li><a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'v_status_list' %}">Status</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -77,7 +68,7 @@
                 {%endif%}
                 {%if 'admin' in user.groups.get.name or 'telecom' in user.groups.get.name%}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
                         Telecom</a>
                     <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
                         <li class="dropdown-submenu">
@@ -85,12 +76,12 @@
                                 Móvel</a>
                             <ul class="dropdown-menu">
                                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
-                                <a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a>
+                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
                                 {%endif%}
-                                <a class="dropdown-item" href="{% url 'line_list' %}">Linhas</a>
+                                <li><a class="dropdown-item" href="{% url 'line_list' %}">Linhas</a></li>
                                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
-                                <a class="dropdown-item" href="{% url 'smartphone_list' %}">Smartphones</a>
-                                <a class="dropdown-item" href="{% url 'vivobox_list' %}">VivoBox</a>
+                                <li><a class="dropdown-item" href="{% url 'smartphone_list' %}">Smartphones</a></li>
+                                <li><a class="dropdown-item" href="{% url 'vivobox_list' %}">VivoBox</a></li>
                                 {%endif%}
                             </ul>
                         </li>
