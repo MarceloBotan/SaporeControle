@@ -6,7 +6,7 @@ from django.contrib.sessions.models import Session
 from .models import UserSession
 from django.views.generic.edit import CreateView
 
-from hcaptcha.fields import hCaptchaField
+#from hcaptcha.fields import hCaptchaField
 
 login_tries = {}
 tries = 1
