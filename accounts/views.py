@@ -20,7 +20,7 @@ def login(request):
     global login_tries
     global tries
     LOGIN_TRIES_MAX = 3
-
+    
     #Se não estiver tentando logar, ele apenas abre a tela de login
     if  request.method != 'POST':
         return render(request, 'accounts/login.html')

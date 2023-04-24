@@ -4,6 +4,7 @@
 
 {% block content %}
 <div class="d-flex justify-content-between mt-5">
+    {{user.get_user_permissions}}
     <h1>Filiais </h1>
     <div>
         <a class="mt-2 ml-1 btn btn-primary justify-content-center" href="{% url 'branch_edit' %}">

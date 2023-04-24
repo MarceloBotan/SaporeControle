@@ -24,7 +24,7 @@ class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     login_url = '/accounts/login/'
 
     #Permissão para acessar a página
-    permission_required = 'telecom.view_branch'
+    permission_required = 'branch.view_branch'
 
     #Envia a Query ordenada para o HTML
     def get_queryset(self):
@@ -45,7 +45,7 @@ class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     login_url = '/accounts/login/'
 
     #Permissão para acessar a página
-    permission_required = 'telecom.change_branch'
+    permission_required = 'branch.change_branch'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
