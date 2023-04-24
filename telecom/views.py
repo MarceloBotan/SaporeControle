@@ -306,9 +306,6 @@ class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
                 'line_telecom_'
             )
 
-        print(line_status, line_telecom, line_filter_telecom, line_status_count, line_by_status_by_model)
-        # print(smartphone_status, smartphone_models, smartphone_filter_models, smartphone_status_count, smartphone_by_status_by_model)
-
         context["qs_smartphone_status"] = smartphone_status
         context["qs_smartphone_models"] = smartphone_models
         context["qs_smartphone_filter_models"] = smartphone_filter_models
