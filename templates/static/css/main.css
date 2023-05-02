@@ -95,7 +95,7 @@ strong {
 }
 
 .card {
-    box-shadow: 0 .2rem .2rem var(--shadow-dark);
+    box-shadow: 0 .4rem .2rem -.2rem var(--shadow-dark);
 }
 
 .btn-secondary, .btn-secondary.disabled,.btn-secondary:disabled, .btn-outline-secondary, 
