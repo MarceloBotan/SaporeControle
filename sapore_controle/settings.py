@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'branch.apps.BranchConfig',
     'telecom.apps.TelecomConfig',
+    'dashboard.apps.DashboardConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -163,8 +164,7 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-HCAPTCHA_SITEKEY = '<your sitekey>'
-HCAPTCHA_SECRET = '<your secret key>'
+PAGINATE_BY = 50
 
 try:
     from .local_settings import *

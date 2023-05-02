@@ -1,7 +1,7 @@
-<div class="pagination">
+<nav>
     <ul class="pagination">
         {% if page_obj.has_previous %}
-            <li class="page-item" style="color: #ac0e14;">
+            <li class="page-item">
                 <a class="page-link" href="?page=1&term={{ request.GET.term }}">&laquo;</a>
             </li>
             <li class="page-item">
@@ -29,4 +29,4 @@
             </li>
         {% endif %}
     </ul>
-</div>
+</nav>

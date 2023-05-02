@@ -1,10 +1,9 @@
-{% extends 'telecom/param/index_list.html' %}
+{% extends 'partials/_index_list.html' %}
 
 {% block title %}Smartphone | Status | Sapore{% endblock %}
 
 
 {%block list_title%}Status de Smartphone {%endblock%}
-{%block list_add%} Adicionar Status{%endblock%}
 {%block list_add_url%}{% url 's_status_add' %}{%endblock%}
 
 {%block list_th%}
@@ -17,4 +16,3 @@
 {%endblock%}
 
 {%block list_edit_url%}{% url 's_status_edit' object.id %}{%endblock%}
-{%block list_delete_url%}{% url 'delete_status' 'smartphone' object.id 0 %}{%endblock%}

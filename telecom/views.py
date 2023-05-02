@@ -24,6 +24,7 @@ from .models import LineStatus, LineStatusRFP, SmartStatus, BoxStatus, LineTelec
 
 from itertools import chain
 from sapore_controle.settings import MEDIA_ROOT
+from sapore_controle.settings import PAGINATE_BY
 import csv
 import os
 
@@ -112,13 +113,14 @@ def delete_model(request, telecom_type, model_id):
     if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
         #Sobre erro 403 - Permissão Negada
         raise PermissionDenied()
-
+    
     if telecom_type == 'vivobox':
         try:
             box_model = BoxModel.objects.get(id=model_id)
             box_model.delete()
         except:
             messages.error(request, 'Modelo não pode ser deletado')
+        messages.success(request, 'Modelo removido')
         return redirect('v_model_list')
     
     elif telecom_type == 'smartphone':
@@ -127,6 +129,7 @@ def delete_model(request, telecom_type, model_id):
             smart_model.delete()
         except:
             messages.error(request, 'Modelo não pode ser deletado')
+        messages.success(request, 'Modelo removido')
         return redirect('s_model_list')
         
     elif telecom_type == 'line':
@@ -134,13 +137,14 @@ def delete_model(request, telecom_type, model_id):
             line_plan = LinePlan.objects.get(id=model_id)
             line_plan.delete()
         except:
-            messages.error(request, 'Modelo não pode ser deletado')
+            messages.error(request, 'Plano não pode ser deletado')
+        messages.success(request, 'Plano removido')
         return redirect('line_plan_list')
     
     return redirect('index')
 
 @login_required(redirect_field_name='login')
-def delete_status(request, telecom_type, status_id, rfp):
+def delete_status(request, telecom_type, status_id):
     if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
         #Sobre erro 403 - Permissão Negada
         raise PermissionDenied()
@@ -151,6 +155,7 @@ def delete_status(request, telecom_type, status_id, rfp):
             box_status.delete()
         except:
             messages.error(request, 'Modelo não pode ser deletado')
+        messages.success(request, 'Status removido')
         return redirect('v_status_list')
     
     elif telecom_type == 'smartphone':
@@ -159,14 +164,16 @@ def delete_status(request, telecom_type, status_id, rfp):
             smart_status.delete()
         except:
             messages.error(request, 'Modelo não pode ser deletado')
+        messages.success(request, 'Status removido')
         return redirect('s_status_list')
     
-    elif telecom_type == 'line' and rfp == 1:
+    elif telecom_type == 'line_rfp':
         try:
             line_plan = LineStatusRFP.objects.get(id=status_id)
             line_plan.delete()
         except:
             messages.error(request, 'Modelo não pode ser deletado')
+        messages.success(request, 'Status removido')
         return redirect('line_status_rfp_list')
     
     elif telecom_type == 'line':
@@ -175,156 +182,10 @@ def delete_status(request, telecom_type, status_id, rfp):
             line_plan.delete()
         except:
             messages.error(request, 'Modelo não pode ser deletado')
+        messages.success(request, 'Status removido')
         return redirect('line_status_list')
 
     return redirect('index')
-
-@login_required(redirect_field_name='login')
-def index(request):
-    if 'sapore_telecom' in request.user.groups.get().name:
-        return redirect('dashboard')
-    elif 'tg_' in request.user.groups.get().name:
-        return redirect('line_list')
-    return render(request, 'telecom/index.html')
-
-#############
-# Dashboard #
-#############
-
-class Dashboard(PermissionRequiredMixin, LoginRequiredMixin, TemplateView):
-    #Caminho do arquivo html
-    template_name = 'telecom/dashboard.html'    
-    #Redireciona caso não estiver logado
-    login_url = '/accounts/login/'
-    #Permissão para acessar a página
-    permission_required = 'telecom.view_lineplan'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        def object_by_status_by_model(objects):
-            object_by_status_by_model = {}
-            for object in objects:
-                model_count = {}
-                try:
-                    model_name = object.obj_model.name
-                except:
-                    model_name = object.telecom.name
-                status_name = object.status.name
-                model_count[model_name] = object.status_count
-                if status_name not in object_by_status_by_model.keys():
-                    object_by_status_by_model[status_name] = model_count
-                    continue
-                object_by_status_by_model[status_name].update(model_count)
-            return object_by_status_by_model
-
-        def split_object(object, _objectmodels, _objectstatus, object_name):
-            object_status_count = []
-            object_models = []
-            object_status = []
-            object_filter_models = []
-            i = 0
-            for model in _objectmodels:
-                object_models.append(model.name)
-                model_status_count = []
-                has_filter = False
-                if len(list(self.request.GET)) > 0:
-                    if object_name in list(self.request.GET)[0]:
-                        has_filter = True
-                if self.request.GET.get(object_name + model.name) == 'on' or not has_filter:
-                    object_filter_models.append(model.name)
-
-                    for status in _objectstatus:
-                        if status.name not in object_status:
-                            object_status.append(status.name)
-                        if status.name in object.keys():
-                            if model.name in object[status.name].keys():
-                                model_status_count.append(object[status.name][model.name])
-                                continue
-                            model_status_count.append(0)
-                    object_status_count.append(model_status_count)
-                i += 1
-
-            if not object_filter_models:
-                object_filter_models = object_models
-            
-            return object_status_count, object_models, object_status, object_filter_models
-
-        smartphones = Smartphone.objects.raw(
-            'select sp.id, count(sp.id) as status_count \
-	            from telecom_smartphone sp \
-                group by sp.status_id, sp.obj_model_id'
-        )
-
-        _smartmodels = SmartModel.objects.all()
-        _smartstatus = SmartStatus.objects.all()
-
-        smartphone_by_status_by_model = object_by_status_by_model(smartphones)
-
-        smartphone_status_count, smartphone_models, \
-            smartphone_status, smartphone_filter_models = split_object(
-                smartphone_by_status_by_model, 
-                _smartmodels,
-                _smartstatus,
-                'smartphone_')
-
-        vivoboxs = VivoBox.objects.raw(
-            'select vb.id, count(vb.id) as status_count \
-	            from telecom_vivobox vb \
-                group by vb.status_id, vb.obj_model_id'
-        )
-
-        _boxmodels = BoxModel.objects.all()
-        _boxstatus = BoxStatus.objects.all()
-
-        vivobox_by_status_by_model = object_by_status_by_model(vivoboxs)
-
-        vivobox_status_count, vivobox_models, \
-            vivobox_status, vivobox_filter_models = split_object(
-                vivobox_by_status_by_model,
-                _boxmodels,
-                _boxstatus,
-                'vivobox_'
-            )
-
-        lines = Line.objects.raw(
-            'select l.id, count(l.id) as status_count \
-	            from telecom_line l \
-                group by l.status_id, l.telecom_id'
-        )
-
-        _linetelecom = LineTelecom.objects.all()
-        _linestatus = LineStatus.objects.all()
-
-        line_by_status_by_model = object_by_status_by_model(lines)
-
-        line_status_count, line_telecom, \
-            line_status, line_filter_telecom = split_object(
-                line_by_status_by_model,
-                _linetelecom,
-                _linestatus,
-                'line_telecom_'
-            )
-
-        context["qs_smartphone_status"] = smartphone_status
-        context["qs_smartphone_models"] = smartphone_models
-        context["qs_smartphone_filter_models"] = smartphone_filter_models
-        context["qs_smartphone_count"] = smartphone_status_count
-        context["qs_smartphone"] = smartphone_by_status_by_model
-
-        context["qs_line_status"] = line_status
-        context["qs_line_telecom"] = line_telecom
-        context["qs_line_filter_telecom"] = line_filter_telecom
-        context["qs_line_count"] = line_status_count
-        context["qs_line"] = line_by_status_by_model
-
-        context["qs_vivobox_status"] = vivobox_status
-        context["qs_vivobox_models"] = vivobox_models
-        context["qs_vivobox_filter_models"] = vivobox_filter_models
-        context["qs_vivobox_count"] = vivobox_status_count
-        context["qs_vivobox"] = vivobox_by_status_by_model
-
-        return context
 
 ############
 # LinePlan #
@@ -335,7 +196,7 @@ class LinePlanList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/line/plan_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -348,6 +209,12 @@ class LinePlanList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_model/line/'
+        return context
 
 class LinePlanEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = LinePlan
@@ -405,7 +272,7 @@ class LineStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/line/status_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -418,6 +285,12 @@ class LineStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_status/line/'
+        return context
 
 class LineStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = LineStatus
@@ -474,7 +347,7 @@ class LineStatusRFPList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/line/status_rfp_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -487,6 +360,12 @@ class LineStatusRFPList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_status/line_rfp/'
+        return context
 
 class LineStatusRFPEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = LineStatusRFP
@@ -543,7 +422,7 @@ class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/model_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -556,6 +435,12 @@ class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_model/smartphone/'
+        return context
 
 class SmartModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = SmartModel
@@ -613,7 +498,7 @@ class SmartStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/status_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -626,6 +511,12 @@ class SmartStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_status/smartphone/'
+        return context
 
 class SmartStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = SmartStatus
@@ -682,7 +573,7 @@ class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/model_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -695,6 +586,12 @@ class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_model/vivobox/'
+        return context
 
 class BoxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = BoxModel
@@ -746,7 +643,7 @@ class BoxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/status_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'objects'
     #Redireciona caso não estiver logado
@@ -759,6 +656,12 @@ class BoxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = super().get_queryset()
         qs = qs.order_by('name', '-id')
         return qs
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["url_delete"] = '/telecom/delete_status/vivobox/'
+        return context
 
 class BoxStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     model = BoxStatus
@@ -810,7 +713,7 @@ class LineList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/line/line_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'lines'
 
@@ -1025,7 +928,7 @@ class SmartphoneList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/smartphone/smartphone_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'smartphones'
 
@@ -1242,7 +1145,7 @@ class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'telecom/vivobox/vivobox_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'vivoboxs'
 

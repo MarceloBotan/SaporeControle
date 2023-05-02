@@ -7,6 +7,8 @@ from .forms import FormUploadFile
 from django.contrib import messages
 
 from sapore_controle.settings import MEDIA_ROOT
+from sapore_controle.settings import PAGINATE_BY
+
 import pandas as pd
 import os
 import warnings
@@ -16,7 +18,7 @@ class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Caminho do arquivo html
     template_name = 'branch/branch_list.html'
     #Número de itens por página
-    paginate_by = 20
+    paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
     context_object_name = 'branchs'
 

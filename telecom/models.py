@@ -96,7 +96,7 @@ class Smartphone(models.Model):
     status = models.ForeignKey('SmartStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
 
     def __str__(self):
-        return self.s_model.name
+        return self.obj_model.name
 
 class SmartModel(models.Model):
     name = models.CharField(max_length=31, verbose_name='Modelo')
@@ -127,7 +127,7 @@ class VivoBox(models.Model):
     status = models.ForeignKey('BoxStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
 
     def __str__(self):
-        return self.name
+        return self.obj_model.name
 
 class BoxModel(models.Model):
     name = models.CharField(max_length=31, verbose_name='Modelo')

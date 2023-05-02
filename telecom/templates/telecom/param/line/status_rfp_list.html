@@ -1,10 +1,9 @@
-{% extends 'telecom/param/index_list.html' %}
+{% extends 'partials/_index_list.html' %}
 
 {% block title %}Linhas | Status RFP | Sapore{% endblock %}
 
 
 {%block list_title%}Status RFP {%endblock%}
-{%block list_add%} Adicionar Status RFP{%endblock%}
 {%block list_add_url%}{% url 'line_status_rfp_add' %}{%endblock%}
 
 {%block list_th%}
@@ -17,4 +16,3 @@
 {%endblock%}
 
 {%block list_edit_url%}{% url 'line_status_rfp_edit' object.id %}{%endblock%}
-{%block list_delete_url%}{% url 'delete_status' 'line' object.id 1 %}{%endblock%}

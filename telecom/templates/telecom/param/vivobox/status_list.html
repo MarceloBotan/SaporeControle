@@ -1,10 +1,9 @@
-{% extends 'telecom/param/index_list.html' %}
+{% extends 'partials/_index_list.html' %}
 
 {% block title %}Vivobox | Status | Sapore{% endblock %}
 
 
 {%block list_title%}Status de Vivobox {%endblock%}
-{%block list_add%} Adicionar Status{%endblock%}
 {%block list_add_url%}{% url 'v_status_add' %}{%endblock%}
 
 {%block list_th%}
@@ -17,4 +16,3 @@
 {%endblock%}
 
 {%block list_edit_url%}{% url 'v_status_edit' object.id %}{%endblock%}
-{%block list_delete_url%}{% url 'delete_status' 'vivobox' object.id 0 %}{%endblock%}

@@ -1,3 +1,84 @@
-{% extends 'telecom/line/index.html' %}
+{% extends 'telecom/index_list.html' %}
 
 {% block title %}Lista de Linhas | Sapore{% endblock %}
+
+{%block list_title%}Linhas {%endblock%}
+
+{% block url_gen_csv %}{% url 'generate_csv' 'line' '0' %}{% endblock %}
+{% block url_gen_simple_csv %}{% url 'generate_csv' 'line' '1' %}{% endblock %}
+{% block url_add %}{% url 'line_add' %}{% endblock %}
+{% block url_list %}{% url 'line_list' %}{% endblock %}
+{% block url_search %}{% url 'line_search' %}{% endblock %}
+
+{% block filter_form %}
+<div class="col-md-6">
+    <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
+            type="search" placeholder="Nome" aria-label="Search">
+</div>
+<div class="col-md-6">
+    <input name="line" value="{{ request.GET.line }}" class="form-control mr-sm-2" 
+            type="search" placeholder="Número/Sim Card" aria-label="Search">
+</div>      
+<div class="col-md-3">
+    <select name="filter_telecom" class="form-select" id="telecomSelect" aria-label="Select telecom">
+        <option value="">Operadora</option>
+        {% for telecom in qs_line_telecom %}
+        {% if telecom.name == request.GET.filter_telecom %}
+            <option selected value="{{telecom}}">{{telecom}}</option>
+        {% else %}
+            <option value="{{telecom}}">{{telecom}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-3">
+    <select name="filter_plan" class="form-select" id="planSelect" aria-label="Select plan">
+        <option value="">Plano</option>
+        {% for plan in qs_line_plan %}
+        {% if plan.name == request.GET.filter_plan %}
+            <option selected value="{{plan}}">{{plan}}</option>
+        {% else %}
+            <option value="{{plan}}">{{plan}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
+<div class="col-md-3">
+    <input name="filter_branch" value="{{ request.GET.filter_branch }}" class="form-control mr-sm-2" 
+        type="search" placeholder="Filial" aria-label="Search">
+</div>
+<div class="col-md-3">
+    <select name="filter_status" class="form-select" id="statusSelect" aria-label="Select status">
+        <option value="">Status</option>
+        {% for status in qs_line_status %}
+        {% if status.name == request.GET.filter_status %}
+            <option selected value="{{status}}">{{status}}</option>
+        {% else %}
+            <option value="{{status}}">{{status}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
+{% endblock %}
+
+{% block table_head %}
+<th scope="col"><label>Operadora</label></th>
+<th scope="col"><label>Linha</label></th>
+<th scope="col"><label>Nome</label></th>
+<th scope="col"><label>Filial</label></th>
+<th scope="col"><label>Status</label></th>
+{%endblock%}
+
+{% block table_body %}
+{% for line in lines %}
+<tr>
+    <td>{{line.telecom}}</td>
+    <td><a href="{% url 'line_details' line.id %}">{{line.number}}</a></td>
+    <td>{{line.name}}</td>
+    <td>{{line.branch}}</td>
+    <td>{{line.status}}</td>
+</tr>
+{% endfor %}
+{%endblock%}
+            
+                

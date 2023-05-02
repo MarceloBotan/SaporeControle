@@ -1,22 +1,23 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg navbar-dark static-top" id="navBar">
-    <div class="container">
-        <a class="navbar-brand" aria-label="Home" href="{% url 'index' %}">
+<nav class="navbar navbar-expand-lg navbar-dark primary static-top" id="navBar">
+    <div class="container-fluid">
+        <a class="navbar-item col-1" aria-label="Home" href="{% url 'index' %}">
             <img src="{% static 'img/logo_sapore.png' %}" 
-                    id="logoSapore" alt="">
+                    id="logoSapore" aria-label="Logo">
         </a>
         {% if 'accounts' not in request.path %}
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
-                aria-controls="navbarResponsive" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive"
+            aria-label="Navigation options">
+                <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Parâmetros</a>
                     <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
+                        <li><a class="dropdown-item" href="{% url 'chart_list' %}">Gráficos</a></li>
                         <li><a class="dropdown-item" href="{% url 'branch_list' %}">Filiais</a></li>
                         <li class="dropdown-submenu">
                             <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
@@ -48,7 +49,7 @@
                 {%endif%}
                 {%if 'admin' in user.groups.get.name or 'telecom' in user.groups.get.name%}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Telecom</a>
                     <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
                         <li class="dropdown-submenu">
@@ -56,7 +57,7 @@
                                 Móvel</a>
                             <ul class="dropdown-menu">
                                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
-                                <li><a class="dropdown-item" href="{% url 'dashboard' %}">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="{% url 'dashboard_telecom' %}">Dashboard</a></li>
                                 {%endif%}
                                 <li><a class="dropdown-item" href="{% url 'line_list' %}">Linhas</a></li>
                                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
@@ -72,7 +73,6 @@
                     <a class="nav-link" href="{% url 'logout' %}">Sair</a>
                 </li>
             </ul>
-        </div>
         {% endif %}
     </div>
 </nav>

@@ -2,13 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
-    
     path('generate_csv/<str:telecom_type>/<int:csv_simple>', views.generate_csv, name='generate_csv'),
 
     path('delete_model/<str:telecom_type>/<int:model_id>', views.delete_model, name='delete_model'),
-    path('delete_status/<str:telecom_type>/<int:status_id>/<int:rfp>', views.delete_status, name='delete_status'),
+    path('delete_status/<str:telecom_type>/<int:status_id>', views.delete_status, name='delete_status'),
 
     #Modelo/Plano#
     path('s_model_list/', views.SmartModelList.as_view(), name='s_model_list'),

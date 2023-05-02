@@ -1,0 +1,18 @@
+{% extends 'partials/_index_list.html' %}
+
+{% block title %}Lista | Gráficos | Sapore{% endblock %}
+
+
+{%block list_title%}Gráficos {%endblock%}
+{%block list_add_url%}{% url 'chart_add' %}{%endblock%}
+
+{%block list_th%}
+<th><label scope="col">Nome</label></th>
+<th></th>
+{%endblock%}
+
+{%block list_tb%}
+<td>{{object.name}}</td>
+{%endblock%}
+
+{%block list_edit_url%}{% url 'chart_edit' object.id %}{%endblock%}

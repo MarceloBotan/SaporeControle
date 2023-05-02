@@ -1,9 +1,128 @@
-@font-face {
-    font-family: 'LDFComicSans';
-    src: local('LDFComicSans'),
-        url('{% static 'fonts/LDFComicSans.otf' %} format("truetype")');
-}
-
 *{
     font-family:'Aileron';
 }
+
+@font-face {
+    font-family: 'Aileron';
+    font-style: normal;
+    src: local('Aileron'), url('{% static "fonts/Aileron-Regular.otf" %}') format('opentype');
+}
+
+:root {
+    --red: rgba(172, 14, 20, 1);
+    --gray: rgba(119, 120, 123, 1);
+    --yellow: rgba(255, 215, 0, 1);
+    --black: rgba(46, 42, 37, 1);
+    --shadow-light: rgba(46, 42, 37, 0.2);
+    --shadow: rgba(46, 42, 37, 0.5);
+    --shadow-dark: rgba(46, 42, 37, 0.8);
+}
+
+#loadingDiv {
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: var(--shadow-dark);
+    z-index: 3;
+}
+
+.dropdown-submenu{
+    position: relative;
+}
+
+.dropdown-submenu a::after{
+    transform: rotate(-90deg);
+    position: absolute;
+    right: 3px;
+    top: 40%;
+}
+
+.dropdown-submenu:hover .dropdown-menu, .dropdown-submenu:focus .dropdown-menu{
+    display: flex;
+    flex-direction: column;
+    position: absolute !important;
+    margin-top: -30px;
+    left: 100%;
+}
+
+#logoSapore {
+    width: 80px;
+    height: 20px;
+}
+
+#navBar {
+    background-color: var(--red);
+}
+
+a, a:hover, .btn-link:hover, .page-link, .page-link:hover {
+    color: var(--red);
+}
+
+td > a, dd > a {
+    text-decoration: none;
+}
+
+td > a:hover, dd > a:hover {
+    text-decoration: underline;
+}
+
+.page-item.active .page-link {
+    color: #fff;
+}
+
+strong {
+    color: var(--red);
+}
+
+.page-link:focus {
+    box-shadow: 0 0 .1rem .1rem var(--shadow-light);
+}
+
+.btn-primary, .btn-primary.disabled,.btn-primary:disabled, .btn-outline-primary, 
+    .btn-outline-primary:hover, .btn-outline-primary.disabled,.btn-outline-primary:disabled, 
+    .btn-outline-primary.dropdown-toggle, .page-item.active .page-link {
+        background-color: var(--red);
+        border-color: var(--red);
+}
+
+.btn-primary:hover, .custom-control-input:checked~.custom-control-label::before, 
+    .custom-checkbox .custom-control-input:indeterminate~.custom-control-label::before, 
+    .list-group-item.active {
+        background-color: var(--gray);
+        border-color: var(--gray);
+}
+
+.card {
+    box-shadow: 0 .2rem .2rem var(--shadow-dark);
+}
+
+.btn-secondary, .btn-secondary.disabled,.btn-secondary:disabled, .btn-outline-secondary, 
+    .btn-outline-secondary:hover, .btn-outline-secondary.disabled,.btn-outline-secondary:disabled, 
+    .btn-outline-secondary.dropdown-toggle {
+        background-color: var(--black);
+        border-color: var(--black);
+}
+
+.btn-secondary:hover {
+        background-color: var(--gray);
+        border-color: var(--gray);
+}
+
+.custom-range::-webkit-slider-thumb, 
+    .custom-range::-moz-range-thumb, .custom-range::-ms-thumb, .nav-link, .badge-primary,
+    .progress-bar, .bg-primary {
+        background-color: var(--red);
+}
+
+.btn-primary.focus,.btn-primary:focus, .dropdown-item.active, .dropdown-item:active {
+    background-color: var(--gray) !important;
+    border-color: var(--gray) !important;
+}
+
+.btn.focus,.btn:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
+    .btn-primary:not(:disabled):not(.disabled):active:focus,.show>.btn-primary.dropdown-toggle:focus {
+        box-shadow: 0 0 .1rem .1rem var(--shadow-light);
+}
+

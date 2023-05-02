@@ -1,3 +1,74 @@
-{% extends 'telecom/vivobox/index.html' %}
+{% extends 'telecom/index_list.html' %}
 
 {% block title %}Lista de VivoBox | Sapore{% endblock %}
+
+{%block list_title%}Vivobox {%endblock%}
+
+{% block url_gen_csv %}{% url 'generate_csv' 'vivobox' '0' %}{% endblock %}
+{% block url_gen_simple_csv %}{% url 'generate_csv' 'vivobox' '1' %}{% endblock %}
+{% block url_add %}{% url 'vivobox_add' %}{% endblock %}
+{% block url_list %}{% url 'vivobox_list' %}{% endblock %}
+{% block url_search %}{% url 'vivobox_search' %}{% endblock %}
+
+{% block filter_form %}
+<div class="form-group col-md-6">
+    <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
+            type="search" placeholder="Nome" aria-label="Search">
+</div>
+<div class="form-group col-md-6">
+    <input name="filter_line" value="{{ request.GET.filter_line }}" class="form-control mr-sm-2" 
+            type="search" placeholder="Número" aria-label="Search">
+</div>
+<div class="form-group col-md-3">
+    <select name="filter_model" class="form-select">
+        <option value="">Modelo</option>
+        {% for model in qs_vivobox_model %}
+        {% if model.name == request.GET.filter_model %}
+            <option selected value="{{model}}">{{model}}</option>
+        {% else %}
+            <option value="{{model}}">{{model}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
+<div class="form-group col-md-3">
+    <input name="filter_imei" value="{{ request.GET.filter_imei }}" class="form-control mr-sm-2" 
+            type="search" placeholder="IMEI" aria-label="Search">
+</div>
+<div class="form-group col-md-3">
+    <input name="filter_branch" value="{{ request.GET.filter_branch }}" class="form-control mr-sm-2" 
+        type="search" placeholder="Filial" aria-label="Search">
+</div>
+<div class="form-group col-md-3">
+    <select name="filter_status" class="form-select">
+        <option value="">Status</option>
+        {% for status in qs_vivobox_status %}
+        {% if status.name == request.GET.filter_status %}
+            <option selected value="{{status}}">{{status|title}}</option>
+        {% else %}
+            <option value="{{status}}">{{status|title}}</option>
+        {% endif %}
+        {% endfor %}
+    </select>
+</div>
+{% endblock %}
+
+{% block table_head %}
+<th><label class="mb-2">Modelo</label></th>
+<th><label class="mb-2">IMEI</label></th>
+<th><label class="mb-2">Nome</label></th>
+<th><label class="mb-2">Filial</label></th>
+<th><label class="mb-2">Status</label></th>
+{%endblock%}
+
+{% block table_body %}
+{% for vivobox in vivoboxs %}
+<tr>
+    <td>{{vivobox.obj_model}}</td>
+    <td><a href="{% url 'vivobox_details' vivobox.id %}">{{vivobox.imei_1}}</a></td>
+    <td>{{vivobox.name}}</td>
+    <td>{{vivobox.branch}}</td>
+    <td>{{vivobox.status}}</td>
+</tr>
+{% endfor %}
+{%endblock%}

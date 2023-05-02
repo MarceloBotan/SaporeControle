@@ -13,23 +13,32 @@
         function showLoaderOnClick(url) {
             showLoader();
             window.location=url;
-        }
+        };
+
         function showLoader(){
             $('body').append(
                 '<div id="loadingDiv" class="d-flex justify-content-center">\
-                <div class="spinner-border text-light" style="margin: auto; width: 3rem; height: 3rem;" role="status">\
-                <span class="sr-only">Loading...</span></div></div>'
+                    <div class="spinner-border text-light" style="margin: auto; width: 3rem; \
+                        height: 3rem;" role="status"><span class="sr-only"></span> \
+                    </div>\
+                </div>'
             );
-        }
+        };
 
         $(window).on('load', function(){
             setTimeout(removeLoader, 500); //wait for page load
             showLoader();
+            topFunction();
         });
 
         function removeLoader(){
-            $( "#loadingDiv" ).remove(); //makes page more lightweight 
-        }
+            $( "#loadingDiv" ).remove();
+        };
+
+        function topFunction() {
+            document.body.scrollTop = 0; // For Safari
+            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+        };
     </script>
 
     {% block scripts %}{% endblock scripts %}
@@ -46,6 +55,7 @@
 
     {% include 'partials/_footer.html' %}
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 </body>
 <!--Marcelo Botan-->
 </html>

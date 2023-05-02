@@ -1,10 +1,9 @@
-{% extends 'telecom/param/index_list.html' %}
+{% extends 'partials/_index_list.html' %}
 
 {% block title %}Smartphone | Modelos | Sapore{% endblock %}
 
 
 {%block list_title%}Modelos de Smartphone {%endblock%}
-{%block list_add%} Adicionar Modelo{%endblock%}
 {%block list_add_url%}{% url 's_model_add' %}{%endblock%}
 
 {%block list_th%}
@@ -19,4 +18,3 @@
 {%endblock%}
 
 {%block list_edit_url%}{% url 's_model_edit' object.id %}{%endblock%}
-{%block list_delete_url%}{% url 'delete_model' 'smartphone' object.id %}{%endblock%}
