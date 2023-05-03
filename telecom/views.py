@@ -715,7 +715,7 @@ class LineList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Número de itens por página
     paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
-    context_object_name = 'lines'
+    context_object_name = 'objects'
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
@@ -930,7 +930,7 @@ class SmartphoneList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Número de itens por página
     paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
-    context_object_name = 'smartphones'
+    context_object_name = 'objects'
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
@@ -1147,7 +1147,7 @@ class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Número de itens por página
     paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
-    context_object_name = 'vivoboxs'
+    context_object_name = 'objects'
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'

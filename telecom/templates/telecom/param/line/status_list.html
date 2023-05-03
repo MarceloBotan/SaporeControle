@@ -1,10 +1,10 @@
-{% extends 'partials/_index_list.html' %}
+{% extends 'telecom/param/index_list.html' %}
 
 {% block title %}Linhas | Status | Sapore{% endblock %}
 
 
 {%block list_title%}Status {%endblock%}
-{%block list_add_url%}{% url 'line_status_add' %}{%endblock%}
+{%block url_add%}{% url 'line_status_add' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Status</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block list_edit_url%}{% url 'line_status_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'line_status_edit' object.id %}{%endblock%}

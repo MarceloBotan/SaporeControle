@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 
+{% load static %}
 {% load dashboard_extras %}
 
 {% block title %}Dashboard | Sapore{% endblock %}
 
 {%block scripts%}
-{% include 'dashboard/_chart.html' %}
+<script src="{% static 'js/chart.js'%}"></script>
 {%endblock%}
 
 {% block content %}
 <div class="row">
 {%for i in qs_titles|qs_range_len%}
     <div class="col-lg-6 mt-4">
-        {% include 'dashboard/_chart_card.html' with qs_title=qs_titles|getIndex:i qs_label=qs_labels|getIndex:i qs_legend=qs_legends|getIndex:i qs_total=qs_totals|getIndex:i %}
+        {% include 'dashboard/chart_card.html' with qs_title=qs_titles|getIndex:i qs_label=qs_labels|getIndex:i qs_legend=qs_legends|getIndex:i qs_total=qs_totals|getIndex:i %}
     </div>
 {%endfor%}
 </div>

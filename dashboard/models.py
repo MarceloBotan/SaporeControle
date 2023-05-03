@@ -15,7 +15,8 @@ class Chart(models.Model):
     """
 
     name = models.CharField(max_length=255, default='-', verbose_name='Nome')
-    data = models.TextField()
+    query = models.TextField(verbose_name='Query')
+    visible = models.BooleanField(default=True, verbose_name='Visível')
 
     def __str__(self) -> str:
         return self.name

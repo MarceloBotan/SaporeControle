@@ -1,6 +1,6 @@
 {% extends 'telecom/index_list.html' %}
 
-{% block title %}Lista de Smartphones | Sapore{% endblock %}
+{% block title %}Smartphones | Sapore{% endblock %}
 
 {%block list_title%}Smartphones {%endblock%}
 
@@ -9,6 +9,9 @@
 {% block url_add %}{% url 'smartphone_add' %}{% endblock %}
 {% block url_list %}{% url 'smartphone_list' %}{% endblock %}
 {% block url_search %}{% url 'smartphone_search' %}{% endblock %}
+
+{%block url_edit%}{% url 'smartphone_edit' object.id %}{%endblock%}
+{%block url_details%}{% url 'smartphone_details' object.id %}{%endblock%}
 
 {% block filter_form %}
 <div class="col-md-6">
@@ -53,24 +56,20 @@
 </div>
 {% endblock %}
 
-{% block table_head %}
-<th><label class="mb-2">Modelo</label></th>
-<th><label class="mb-2">IMEI</label></th>
-<th><label class="mb-2">Nome</label></th>
-<th><label class="mb-2">Filial</label></th>
-<th><label class="mb-2">Status</label></th>
+{% block list_th %}
+    <th scope="col"><label>Modelo</label></th>
+    <th scope="col"><label>IMEI</label></th>
+    <th scope="col"><label>Nome</label></th>
+    <th scope="col"><label>Filial</label></th>
+    <th scope="col"><label>Status</label></th>
 {%endblock%}
 
-{% block table_body %}
-{% for smartphone in smartphones %}
-<tr>
-    <td>{{smartphone.obj_model}}</td>
-    <td><a href="{% url 'smartphone_details' smartphone.id %}">{{smartphone.imei_1}}</a></td>
-    <td>{{smartphone.name}}</td>
-    <td>{{smartphone.branch}}</td>
-    <td>{{smartphone.status}}</td>
-</tr>
-{% endfor %}
+{% block list_tb %}
+    <td>{{object.obj_model}}</td>
+    <td>{{object.imei_1}}</a></td>
+    <td>{{object.name}}</td>
+    <td>{{object.branch}}</td>
+    <td>{{object.status}}</td>
 {%endblock%}
             
                 

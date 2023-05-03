@@ -1,10 +1,10 @@
-{% extends 'partials/_index_list.html' %}
+{% extends 'telecom/param/index_list.html' %}
 
 {% block title %}Linhas | Status RFP | Sapore{% endblock %}
 
 
 {%block list_title%}Status RFP {%endblock%}
-{%block list_add_url%}{% url 'line_status_rfp_add' %}{%endblock%}
+{%block url_add%}{% url 'line_status_rfp_add' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Status RFP</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block list_edit_url%}{% url 'line_status_rfp_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'line_status_rfp_edit' object.id %}{%endblock%}

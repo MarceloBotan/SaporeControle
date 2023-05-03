@@ -22,7 +22,7 @@ class FormChartEdit(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Chart
-        fields = ['name', 'data']
+        fields = ['name', 'query', 'visible']
 
 ##########
 # Status #
@@ -44,4 +44,4 @@ class FormChartAdd(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Chart
-        fields = ['name', 'data']
+        fields = ['name', 'query', 'visible']

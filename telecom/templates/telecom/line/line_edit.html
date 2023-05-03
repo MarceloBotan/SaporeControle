@@ -1,6 +1,6 @@
-{% extends 'partials/_index_form.html' %}
+{% extends 'form.html' %}
 
 {% block title %}Editar - Linha | Sapore{% endblock %}
 
-{%block back_url%}{% url 'line_details' line.id %}{%endblock%}
+{%block back_url%}{% url 'line_list' %}{%endblock%}
 {%block title_form%}Editar Linha - {{line.number}}{%endblock%}

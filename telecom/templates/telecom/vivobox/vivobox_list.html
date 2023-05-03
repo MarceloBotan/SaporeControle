@@ -10,6 +10,9 @@
 {% block url_list %}{% url 'vivobox_list' %}{% endblock %}
 {% block url_search %}{% url 'vivobox_search' %}{% endblock %}
 
+{%block url_edit%}{% url 'vivobox_edit' object.id %}{%endblock%}
+{%block url_details%}{% url 'vivobox_details' object.id %}{%endblock%}
+
 {% block filter_form %}
 <div class="form-group col-md-6">
     <input name="term" value="{{ request.GET.term }}" class="form-control mr-sm-2" 
@@ -53,22 +56,18 @@
 </div>
 {% endblock %}
 
-{% block table_head %}
-<th><label class="mb-2">Modelo</label></th>
-<th><label class="mb-2">IMEI</label></th>
-<th><label class="mb-2">Nome</label></th>
-<th><label class="mb-2">Filial</label></th>
-<th><label class="mb-2">Status</label></th>
+{% block list_th %}
+    <th scope="col"><label>Modelo</label></th>
+    <th scope="col"><label>IMEI</label></th>
+    <th scope="col"><label>Nome</label></th>
+    <th scope="col"><label>Filial</label></th>
+    <th scope="col"><label>Status</label></th>
 {%endblock%}
 
-{% block table_body %}
-{% for vivobox in vivoboxs %}
-<tr>
-    <td>{{vivobox.obj_model}}</td>
-    <td><a href="{% url 'vivobox_details' vivobox.id %}">{{vivobox.imei_1}}</a></td>
-    <td>{{vivobox.name}}</td>
-    <td>{{vivobox.branch}}</td>
-    <td>{{vivobox.status}}</td>
-</tr>
-{% endfor %}
+{% block list_tb %}
+    <td>{{object.obj_model}}</td>
+    <td>{{object.imei_1}}</td>
+    <td>{{object.name}}</td>
+    <td>{{object.branch}}</td>
+    <td>{{object.status}}</td>
 {%endblock%}

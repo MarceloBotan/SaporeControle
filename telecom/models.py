@@ -52,7 +52,7 @@ class Line(models.Model):
     status_rfp = models.ForeignKey('LineStatusRFP', on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return self.name
+        return str(self.number)
 
 class LinePlan(models.Model):
     name = models.CharField(max_length=31, unique=True, verbose_name='Plano')
@@ -96,7 +96,7 @@ class Smartphone(models.Model):
     status = models.ForeignKey('SmartStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
 
     def __str__(self):
-        return self.obj_model.name
+        return str(self.imei_1)
 
 class SmartModel(models.Model):
     name = models.CharField(max_length=31, verbose_name='Modelo')
@@ -127,7 +127,7 @@ class VivoBox(models.Model):
     status = models.ForeignKey('BoxStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
 
     def __str__(self):
-        return self.obj_model.name
+        return str(self.imei_1)
 
 class BoxModel(models.Model):
     name = models.CharField(max_length=31, verbose_name='Modelo')

@@ -1,10 +1,10 @@
-{% extends 'partials/_index_list.html' %}
+{% extends 'telecom/param/index_list.html' %}
 
 {% block title %}Linhas | Planos | Sapore{% endblock %}
 
 
 {%block list_title%}Planos {%endblock%}
-{%block list_add_url%}{% url 'line_plan_add' %}{%endblock%}
+{%block url_add%}{% url 'line_plan_add' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Plano</label></th>
@@ -17,4 +17,4 @@
 <td>{{object.plan_type}}</td>
 {%endblock%}
 
-{%block list_edit_url%}{% url 'line_plan_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'line_plan_edit' object.id %}{%endblock%}

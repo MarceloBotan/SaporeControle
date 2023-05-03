@@ -50,12 +50,15 @@ class DashboardTelecom(PermissionRequiredMixin, LoginRequiredMixin, TemplateView
         _qs = None
         i = 0
         for chart in charts:
+            if not chart.visible:
+                continue
+
             qs_titles.append(chart.name)
             qs_labels.append([])
             qs_totals.append([])
             qs_legends.append([])
 
-            split_data = chart.data.split()
+            split_data = chart.query.split()
             txt = ''
             for slice in split_data:
                 txt += slice + ' '
@@ -95,6 +98,16 @@ def delete_chart(request, id):
     messages.success(request, 'Gráfico removido')
     return redirect('chart_list')
 
+def chart_visibility(request, id, show):
+    try:
+        chart = Chart.objects.get(id=id)
+        chart.visible = show
+        chart.save()
+    except:
+        messages.error(request, 'Id não encontrado')
+
+    return redirect('chart_list')
+
 ############
 # Gráficos #
 ############
@@ -121,6 +134,8 @@ class ChartList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+
+
         context["url_delete"] = '/dashboard/delete_chart/'
         return context
 
@@ -142,7 +157,8 @@ class ChartEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         chart = self.get_object()
         chart.name = form.cleaned_data['name']
-        chart.data = form.cleaned_data['data']
+        chart.query = form.cleaned_data['query']
+        chart.visible = form.cleaned_data['visible']
 
         chart.save()
 

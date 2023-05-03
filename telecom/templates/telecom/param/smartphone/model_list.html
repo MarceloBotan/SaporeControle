@@ -1,10 +1,10 @@
-{% extends 'partials/_index_list.html' %}
+{% extends 'telecom/param/index_list.html' %}
 
 {% block title %}Smartphone | Modelos | Sapore{% endblock %}
 
 
 {%block list_title%}Modelos de Smartphone {%endblock%}
-{%block list_add_url%}{% url 's_model_add' %}{%endblock%}
+{%block url_add%}{% url 's_model_add' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Modelo</label></th>
@@ -17,4 +17,4 @@
 <td>{{object.date_release}}</td>
 {%endblock%}
 
-{%block list_edit_url%}{% url 's_model_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 's_model_edit' object.id %}{%endblock%}

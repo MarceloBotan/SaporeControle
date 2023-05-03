@@ -3,6 +3,10 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
+    
+    path('dashboard/chart_visibility', views.chart_visibility, name='chart_visibility'),
+    path('dashboard/chart_visibility/<int:id>/<int:show>', views.chart_visibility, name='chart_visibility'),
+
     path('dashboard/telecom', views.DashboardTelecom.as_view(), name='dashboard_telecom'),
 
     path('dashboard/delete_chart/<int:id>', views.delete_chart, name='delete_chart'),

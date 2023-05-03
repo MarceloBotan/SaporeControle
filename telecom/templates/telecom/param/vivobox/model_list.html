@@ -1,10 +1,10 @@
-{% extends 'partials/_index_list.html' %}
+{% extends 'telecom/param/index_list.html' %}
 
 {% block title %}Vivobox | Modelos | Sapore{% endblock %}
 
 
 {%block list_title%}Modelos de Vivobox {%endblock%}
-{%block list_add_url%}{% url 'v_model_add' %}{%endblock%}
+{%block url_add%}{% url 'v_model_add' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Modelo</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block list_edit_url%}{% url 'v_model_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'v_model_edit' object.id %}{%endblock%}

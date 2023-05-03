@@ -1,6 +1,6 @@
-{% extends 'partials/_index_form.html' %}
+{% extends 'form.html' %}
 
 {% block title %}Editar - Vivobox | Sapore{% endblock %}
 
-{%block back_url%}{% url 'vivobox_details' vivobox.id %}{%endblock%}
+{%block back_url%}{% url 'vivobox_list' %}{%endblock%}
 {%block title_form%}Editar Vivobox - {{vivobox.imei_1}}{%endblock%}

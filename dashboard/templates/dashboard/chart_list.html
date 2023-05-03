@@ -1,18 +1,36 @@
-{% extends 'partials/_index_list.html' %}
+{% extends 'dashboard/index_list.html' %}
 
 {% block title %}Lista | Gráficos | Sapore{% endblock %}
 
-
 {%block list_title%}Gráficos {%endblock%}
-{%block list_add_url%}{% url 'chart_add' %}{%endblock%}
+{%block url_add%}{% url 'chart_add' %}{%endblock%}
+
+{%block scripts%}
+<script>
+    function changeVisibility(id = 1, show) {
+        var show_id = 0;
+        if (show) {
+            show_id = 1;
+        }
+            
+        window.location.href = "{% url 'chart_visibility' %}" + "/" + id + "/" + show_id;
+    }
+</script>
+{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Nome</label></th>
+<th><label scope="col">Visibilidade</label></th>
 <th></th>
 {%endblock%}
 
 {%block list_tb%}
 <td>{{object.name}}</td>
+<td>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" onChange="changeVisibility({{object.id}}, this.checked)" {%if object.visible%}checked{%endif%}>
+    </div>
+</td>
 {%endblock%}
 
-{%block list_edit_url%}{% url 'chart_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'chart_edit' object.id %}{%endblock%}

@@ -1,6 +1,6 @@
-{% extends 'partials/_index_form.html' %}
+{% extends 'form.html' %}
 
 {% block title %}Editar - Smartphone | Sapore{% endblock %}
 
-{%block back_url%}{% url 'smartphone_details' smartphone.id %}{%endblock%}
+{%block back_url%}{% url 'smartphone_list' %}{%endblock%}
 {%block title_form%}Editar Smartphone - {{smartphone.imei_1}}{%endblock%}

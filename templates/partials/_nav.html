@@ -1,4 +1,39 @@
 {% load static %}
+<script>
+    $(document).ready(function () {
+        $('.navbar .dropdown-item').on('click', function (e) {
+
+        });
+
+
+        /*$('.navbar .dropdown-item').on('click', function (e) {
+            var $el = $(this).children('.dropdown-toggle');
+            var $parent = $el.offsetParent(".dropdown-menu");
+            $(this).parent("li").toggleClass('open');
+    
+            if (!$parent.parent().hasClass('navbar-nav')) {
+                if ($parent.hasClass('show')) {
+                    $parent.removeClass('show');
+                    $el.next().removeClass('show');
+                    $el.next().css({"top": -999, "left": -999});
+                } else {
+                    $parent.parent().find('.show').removeClass('show');
+                    $parent.addClass('show');
+                    $el.next().addClass('show');
+                    $el.next().css({"top": $el[0].offsetTop, "left": $parent.outerWidth() - 4});
+                }
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    
+        $('.navbar .dropdown').on('hidden.bs.dropdown', function () {
+            $(this).find('li.dropdown').removeClass('show open');
+            $(this).find('ul.dropdown-menu').removeClass('show open');
+        });*/
+    
+    });
+</script>
 <nav class="navbar navbar-expand-lg navbar-dark primary static-top" id="navBar">
     <div class="container-fluid">
         <a class="navbar-item col-1" aria-label="Home" href="{% url 'index' %}">
@@ -11,16 +46,16 @@
                 <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
-            <ul class="navbar-nav ml-auto">
+            <ul class="navbar-nav mr-auto">
                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         Parâmetros</a>
-                    <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <li><a class="dropdown-item" href="{% url 'chart_list' %}">Gráficos</a></li>
                         <li><a class="dropdown-item" href="{% url 'branch_list' %}">Filiais</a></li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                        <li class="dropend">
+                            <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Linhas</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'line_plan_list' %}">Planos</a></li>
@@ -28,16 +63,16 @@
                                 <li><a class="dropdown-item" href="{% url 'line_status_rfp_list' %}">Status RFP</a></li>
                             </ul>
                         </li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                        <li class="dropend">
+                            <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Smartphones</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 's_model_list' %}">Modelos</a></li>
                                 <li><a class="dropdown-item" href="{% url 's_status_list' %}">Status</a></li>
                             </ul>
                         </li>
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                        <li class="dropend">
+                            <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Vivobox</a>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos</a></li>
@@ -49,11 +84,11 @@
                 {%endif%}
                 {%if 'admin' in user.groups.get.name or 'telecom' in user.groups.get.name%}
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                         Telecom</a>
-                    <ul class="dropdown-menu col-3" aria-labelledby="navbarDropdownMenuLink">
-                        <li class="dropdown-submenu">
-                            <a class="dropdown-item dropdown-toggle" data-toggle="dropdown" href="#">
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <li class="dropend">
+                            <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Móvel</a>
                             <ul class="dropdown-menu">
                                 {%if 'admin' in user.groups.get.name or 'sapore' in user.groups.get.name  %}
