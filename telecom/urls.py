@@ -6,6 +6,7 @@ urlpatterns = [
 
     path('delete_model/<str:telecom_type>/<int:model_id>', views.delete_model, name='delete_model'),
     path('delete_status/<str:telecom_type>/<int:status_id>', views.delete_status, name='delete_status'),
+    path('delete_object/<str:telecom_type>/<int:id>', views.delete_object, name='delete_object'),
 
     #Modelo/Plano#
     path('s_model_list/', views.SmartModelList.as_view(), name='s_model_list'),

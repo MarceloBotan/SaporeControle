@@ -187,6 +187,30 @@ def delete_status(request, telecom_type, status_id):
 
     return redirect('index')
 
+@login_required(redirect_field_name='login')
+def delete_object(request, telecom_type, id):
+    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
+        #Sobre erro 403 - Permissão Negada
+        raise PermissionDenied()
+
+    object = None
+    url_redirect = 'index'
+
+    if telecom_type == 'line':
+        object = Line.objects.get(id=id)
+        url_redirect = 'line_list'
+    elif telecom_type == 'smartphone':
+        object = Smartphone.objects.get(id=id)
+        url_redirect = 'smartphone_list'
+    elif telecom_type == 'vivobox':
+        object = VivoBox.objects.get(id=id)
+        url_redirect = 'vivobox_list'
+    if object:
+        object.delete()
+    
+    messages.success(request, 'Item removido')
+    return redirect(url_redirect)
+
 ############
 # LinePlan #
 ############
@@ -738,11 +762,13 @@ class LineList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         line_plan = LinePlan.objects.all()
         line_status = LineStatus.objects.all()
 
+        context["url_delete"] = '/telecom/delete_object/line/'
+
         context["qs_line_telecom"] = line_telecom
         context["qs_line_plan"] = line_plan
         context["qs_line_status"] = line_status
         return context
-        
+
 #Herda as informações e ordenação da Query do LineList
 class LineSearch(LineList):
     template_name = 'telecom/line/line_search.html'
@@ -950,8 +976,9 @@ class SmartphoneList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         smartphone_model = SmartModel.objects.all()
-
         smartphone_status = SmartStatus.objects.all()
+
+        context["url_delete"] = '/telecom/delete_object/smartphone/'
 
         context["qs_smartphone_status"] = smartphone_status
         context["qs_smartphone_model"] = smartphone_model
@@ -1167,8 +1194,9 @@ class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         vivobox_model = BoxModel.objects.all()
-
         vivobox_status = BoxStatus.objects.all()
+
+        context["url_delete"] = '/telecom/delete_object/vivobox/'
 
         context["qs_vivobox_status"] = vivobox_status
         context["qs_vivobox_model"] = vivobox_model
