@@ -20,7 +20,7 @@ class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Número de itens por página
     paginate_by = PAGINATE_BY
     #Nome da variável do Model no html
-    context_object_name = 'branchs'
+    context_object_name = 'objects'
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
@@ -34,10 +34,10 @@ class BranchList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         qs = qs.order_by('branch', '-id')
         return qs
 
-class BranchEdit(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+class BranchAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     model = UploadFile
     #Caminho do arquivo html
-    template_name = 'branch/branch_edit.html'
+    template_name = 'branch/branch_add.html'
     #Nome da variável do Model no html
     context_object_name = 'files'
     #Formulário para editar a linha

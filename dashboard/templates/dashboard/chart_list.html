@@ -3,7 +3,7 @@
 {% block title %}Lista | Gráficos | Sapore{% endblock %}
 
 {%block list_title%}Gráficos {%endblock%}
-{%block url_add%}{% url 'chart_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'chart' %}{%endblock%}
 
 {%block scripts%}
 <script>
@@ -33,4 +33,4 @@
 </td>
 {%endblock%}
 
-{%block url_edit%}{% url 'chart_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'chart' object.id %}{%endblock%}

@@ -4,7 +4,7 @@
 
 
 {%block list_title%}Status {%endblock%}
-{%block url_add%}{% url 'line_status_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'line_status' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Status</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block url_edit%}{% url 'line_status_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'line_status' object.id %}{%endblock%}

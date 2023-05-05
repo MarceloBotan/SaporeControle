@@ -5,25 +5,112 @@ from django.views.generic import TemplateView, ListView, UpdateView, CreateView
 from django.contrib import messages
 from django.db import connection
 
-from telecom.models import Line, Smartphone, VivoBox
-from telecom.models import SmartModel, BoxModel
-from telecom.models import LineStatus, SmartStatus, BoxStatus, LineTelecom
-
 from django.core.exceptions import PermissionDenied
+
+from django.db.models import Q
+from telecom.models import Line, Smartphone, VivoBox
+from telecom.models import SmartphoneModel, VivoboxModel, LinePlan
+from telecom.models import LineStatus, LineStatusRFP, SmartphoneStatus, VivoboxStatus
 
 from .forms import FormChartAdd, FormChartEdit
 from .models import Chart
 
 from sapore_controle.settings import PAGINATE_BY
 
-
 @login_required(redirect_field_name='login')
 def index(request):
-    user_permission_group = request.user.groups.get().name
+    try:
+        user_permission_group = request.user.groups.get().name
 
-    if 'telecom' in user_permission_group:
-        return redirect('dashboard_telecom')
+        if 'tg' in user_permission_group:
+            return redirect('line_list')
+        if 'telecom' in user_permission_group:
+            return redirect('dashboard_telecom')
+    except:
+        pass
     return render(request, 'dashboard/index.html')
+
+@login_required(redirect_field_name='login')
+def delete_object(request, _type, _id):
+    url_redirect = _type + '_list'
+    _object = None
+
+    if not user_has_perm(request, 'delete', _type):
+        messages.error(request, f'Seu usuário não possui acesso para deletar esse item')
+        return redirect(url_redirect)
+
+    try:
+        _object = get_object(_type, _id)
+    except:
+        messages.error(request, 'Item não encontrado')
+        return redirect(url_redirect)
+
+    try:
+        _object.delete()
+        messages.success(request, 'Item removido')
+        return redirect(url_redirect)
+    except:
+        messages.error(request, 'Item não pode ser removido')
+    
+    return redirect(url_redirect)
+
+@login_required(redirect_field_name='login')
+def edit_object(request, _type, _id):
+    url_list = _type + '_list'
+    url_edit = _type + '_edit'
+
+    if not user_has_perm(request, 'change', _type):
+        messages.error(request, f'Seu usuário não possui acesso para editar esse item')
+        return redirect(url_list)
+
+    return redirect(url_edit, _id)
+
+@login_required(redirect_field_name='login')
+def add_object(request, _type):
+    url_list = _type + '_list'
+    url_add = _type + '_add'
+
+    if not user_has_perm(request, 'add', _type):
+        messages.error(request, f'Seu usuário não possui acesso para adicionar esse item')
+        return redirect(url_list)
+
+    return redirect(url_add)
+
+def get_object(_type, _id):
+    object = None
+    if 'line' in _type:
+        if 'plan' in _type:
+            object = LinePlan.objects.get(id=_id)
+        elif 'status_rfp' in _type:
+            object = LineStatusRFP.objects.get(id=_id)
+        elif 'status' in _type:
+            object = LineStatus.objects.get(id=_id)
+        else:
+            object = Line.objects.get(id=_id)
+    elif 'smartphone' in _type:
+        if 'model' in _type:
+            object = SmartphoneModel.objects.get(id=_id)
+        elif 'status' in _type:
+            object = SmartphoneStatus.objects.get(id=_id)
+        else:
+            object = Smartphone.objects.get(id=_id)
+    elif 'vivobox' in _type:
+        if 'model' in _type:
+            object = VivoboxModel.objects.get(id=_id)
+        elif 'status' in _type:
+            object = VivoboxStatus.objects.get(id=_id)
+        else:
+            object = VivoBox.objects.get(id=_id)
+    elif 'chart' in _type:
+        object = Chart.objects.get(id=_id)
+    return object
+
+def user_has_perm(request, permission, _type):
+    qs_groups = request.user.groups.all()
+    for qs_group in qs_groups:
+        if qs_group.permissions.filter(Q(codename__contains=permission) & Q(codename__contains=_type.replace('_',''))):
+            return True
+    return False
 
 #############
 # Dashboard #
@@ -35,7 +122,7 @@ class DashboardTelecom(PermissionRequiredMixin, LoginRequiredMixin, TemplateView
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.view_lineplan'
+    permission_required = 'dashboard.view_chart'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -63,7 +150,10 @@ class DashboardTelecom(PermissionRequiredMixin, LoginRequiredMixin, TemplateView
             for slice in split_data:
                 txt += slice + ' '
             with connection.cursor() as c:
-                c.execute(txt)
+                try:
+                    c.execute(txt)
+                except:
+                    continue
                 _qs = c.fetchall()
 
                 _legends = -1
@@ -86,31 +176,19 @@ class DashboardTelecom(PermissionRequiredMixin, LoginRequiredMixin, TemplateView
 
         return context
 
-@login_required(redirect_field_name='login')
-def delete_chart(request, id):
-    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
-        #Sobre erro 403 - Permissão Negada
-        raise PermissionDenied()
+############
+# Gráficos #
+############
 
-    chart = Chart.objects.get(id=id)
-    chart.delete()
-    
-    messages.success(request, 'Gráfico removido')
-    return redirect('chart_list')
-
-def chart_visibility(request, id, show):
+def chart_visibility(request, _id, show):
     try:
-        chart = Chart.objects.get(id=id)
+        chart = Chart.objects.get(id=_id)
         chart.visible = show
         chart.save()
     except:
         messages.error(request, 'Id não encontrado')
 
     return redirect('chart_list')
-
-############
-# Gráficos #
-############
 
 class ChartList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     model = Chart
@@ -134,9 +212,7 @@ class ChartList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-
-
-        context["url_delete"] = '/dashboard/delete_chart/'
+        context["url_delete"] = '/delete_object/chart/'
         return context
 
 class ChartEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):

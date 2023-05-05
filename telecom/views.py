@@ -12,15 +12,15 @@ from django.views.generic import TemplateView
 from django.utils import timezone
 
 from .forms import FormLine, FormAddLine, FormSmartphone, FormAddSmartphone, FormVivoBox, FormAddVivoBox
-from .forms import FormSmartModel, FormBoxModel, FormLinePlan
-from .forms import FormLineStatus, FormLineStatusRFP, FormSmartStatus, FormBoxStatus
+from .forms import FormSmartphoneModel, FormVivoboxModel, FormLinePlan
+from .forms import FormLineStatus, FormLineStatusRFP, FormSmartphoneStatus, FormVivoboxStatus
 
 from django.core.exceptions import PermissionDenied
 
 from django.db.models import Q, Count
 from .models import Line, Smartphone, VivoBox
-from .models import SmartModel, BoxModel, LinePlan
-from .models import LineStatus, LineStatusRFP, SmartStatus, BoxStatus, LineTelecom
+from .models import SmartphoneModel, VivoboxModel, LinePlan
+from .models import LineStatus, LineStatusRFP, SmartphoneStatus, VivoboxStatus, LineTelecom
 
 from itertools import chain
 from sapore_controle.settings import MEDIA_ROOT
@@ -108,109 +108,6 @@ def generate_csv(request, telecom_type, csv_simple):
                  str(timezone.now().strftime("%d-%m-%Y")) + '".csv"'},
     )
 
-@login_required(redirect_field_name='login')
-def delete_model(request, telecom_type, model_id):
-    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
-        #Sobre erro 403 - Permissão Negada
-        raise PermissionDenied()
-    
-    if telecom_type == 'vivobox':
-        try:
-            box_model = BoxModel.objects.get(id=model_id)
-            box_model.delete()
-        except:
-            messages.error(request, 'Modelo não pode ser deletado')
-        messages.success(request, 'Modelo removido')
-        return redirect('v_model_list')
-    
-    elif telecom_type == 'smartphone':
-        try:
-            smart_model = SmartModel.objects.get(id=model_id)
-            smart_model.delete()
-        except:
-            messages.error(request, 'Modelo não pode ser deletado')
-        messages.success(request, 'Modelo removido')
-        return redirect('s_model_list')
-        
-    elif telecom_type == 'line':
-        try:
-            line_plan = LinePlan.objects.get(id=model_id)
-            line_plan.delete()
-        except:
-            messages.error(request, 'Plano não pode ser deletado')
-        messages.success(request, 'Plano removido')
-        return redirect('line_plan_list')
-    
-    return redirect('index')
-
-@login_required(redirect_field_name='login')
-def delete_status(request, telecom_type, status_id):
-    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
-        #Sobre erro 403 - Permissão Negada
-        raise PermissionDenied()
-
-    if telecom_type == 'vivobox':
-        try:
-            box_status = BoxStatus.objects.get(id=status_id)
-            box_status.delete()
-        except:
-            messages.error(request, 'Modelo não pode ser deletado')
-        messages.success(request, 'Status removido')
-        return redirect('v_status_list')
-    
-    elif telecom_type == 'smartphone':
-        try:
-            smart_status = SmartStatus.objects.get(id=status_id)
-            smart_status.delete()
-        except:
-            messages.error(request, 'Modelo não pode ser deletado')
-        messages.success(request, 'Status removido')
-        return redirect('s_status_list')
-    
-    elif telecom_type == 'line_rfp':
-        try:
-            line_plan = LineStatusRFP.objects.get(id=status_id)
-            line_plan.delete()
-        except:
-            messages.error(request, 'Modelo não pode ser deletado')
-        messages.success(request, 'Status removido')
-        return redirect('line_status_rfp_list')
-    
-    elif telecom_type == 'line':
-        try:
-            line_plan = LineStatus.objects.get(id=status_id)
-            line_plan.delete()
-        except:
-            messages.error(request, 'Modelo não pode ser deletado')
-        messages.success(request, 'Status removido')
-        return redirect('line_status_list')
-
-    return redirect('index')
-
-@login_required(redirect_field_name='login')
-def delete_object(request, telecom_type, id):
-    if 'sapore_telecom' not in request.user.groups.get().name and 'admin' not in request.user.groups.get().name:
-        #Sobre erro 403 - Permissão Negada
-        raise PermissionDenied()
-
-    object = None
-    url_redirect = 'index'
-
-    if telecom_type == 'line':
-        object = Line.objects.get(id=id)
-        url_redirect = 'line_list'
-    elif telecom_type == 'smartphone':
-        object = Smartphone.objects.get(id=id)
-        url_redirect = 'smartphone_list'
-    elif telecom_type == 'vivobox':
-        object = VivoBox.objects.get(id=id)
-        url_redirect = 'vivobox_list'
-    if object:
-        object.delete()
-    
-    messages.success(request, 'Item removido')
-    return redirect(url_redirect)
-
 ############
 # LinePlan #
 ############
@@ -237,7 +134,7 @@ class LinePlanList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_model/line/'
+        context["url_delete"] = '/delete_object/line_plan/'
         return context
 
 class LinePlanEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
@@ -313,7 +210,7 @@ class LineStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_status/line/'
+        context["url_delete"] = '/delete_object/line_status/'
         return context
 
 class LineStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
@@ -388,7 +285,7 @@ class LineStatusRFPList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_status/line_rfp/'
+        context["url_delete"] = '/delete_object/line_status_rfp/'
         return context
 
 class LineStatusRFPEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
@@ -438,11 +335,11 @@ class LineStatusRFPAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
         return redirect('line_status_rfp_list')
 
 ##############
-# SmartModel #
+# SmartphoneModel #
 ##############
 
-class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    model = SmartModel
+class SmartphoneModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = SmartphoneModel
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/model_list.html'
     #Número de itens por página
@@ -452,7 +349,7 @@ class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.view_smartmodel'
+    permission_required = 'telecom.view_smartphonemodel'
 
     #Envia a Query ordenada para o HTML
     def get_queryset(self):
@@ -463,23 +360,23 @@ class SmartModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_model/smartphone/'
+        context["url_delete"] = '/delete_object/smartphone_model/'
         return context
 
-class SmartModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
-    model = SmartModel
+class SmartphoneModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = SmartphoneModel
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/model_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormSmartModel
+    form_class = FormSmartphoneModel
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
 
     #Permissão para acessar a página
-    permission_required = 'telecom.change_smartmodel'
+    permission_required = 'telecom.change_smartphonemodel'
 
     def form_valid(self, form):
         smart_model = self.get_object()
@@ -488,37 +385,37 @@ class SmartModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 
         smart_model.save()
 
-        return redirect('s_model_list')
+        return redirect('smartphone_model_list')
 
-class SmartModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    model = SmartModel
+class SmartphoneModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = SmartphoneModel
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/model_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormSmartModel
+    form_class = FormSmartphoneModel
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
 
     #Permissão para acessar a página
-    permission_required = 'telecom.add_smartmodel'
+    permission_required = 'telecom.add_smartphonemodel'
 
     def form_valid(self, form):
-        smart_model, created = SmartModel.objects.get_or_create(**form.cleaned_data)
+        smart_model, created = SmartphoneModel.objects.get_or_create(**form.cleaned_data)
         
         if created:
             smart_model.save()
 
-        return redirect('s_model_list')
+        return redirect('smartphone_model_list')
 
 ####################
 # SmartphoneStatus #
 ####################
 
-class SmartStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    model = SmartStatus
+class SmartphoneStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = SmartphoneStatus
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/status_list.html'
     #Número de itens por página
@@ -528,7 +425,7 @@ class SmartStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.view_smartstatus'
+    permission_required = 'telecom.view_smartphonestatus'
 
     #Envia a Query ordenada para o HTML
     def get_queryset(self):
@@ -539,23 +436,23 @@ class SmartStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_status/smartphone/'
+        context["url_delete"] = '/delete_object/smartphone_status/'
         return context
 
-class SmartStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
-    model = SmartStatus
+class SmartphoneStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = SmartphoneStatus
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/status_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormSmartStatus
+    form_class = FormSmartphoneStatus
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
 
     #Permissão para acessar a página
-    permission_required = 'telecom.change_smartstatus'
+    permission_required = 'telecom.change_smartphonestatus'
 
     def form_valid(self, form):
         smart_status = self.get_object()
@@ -563,37 +460,37 @@ class SmartStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 
         smart_status.save()
 
-        return redirect('s_status_list')
+        return redirect('smartphone_status_list')
 
-class SmartStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    model = SmartStatus
+class SmartphoneStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = SmartphoneStatus
     #Caminho do arquivo html
     template_name = 'telecom/param/smartphone/status_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormSmartStatus
+    form_class = FormSmartphoneStatus
 
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
 
     #Permissão para acessar a página
-    permission_required = 'telecom.add_smartstatus'
+    permission_required = 'telecom.add_smartphonestatus'
 
     def form_valid(self, form):
-        smart_status, created = SmartStatus.objects.get_or_create(**form.cleaned_data)
+        smart_status, created = SmartphoneStatus.objects.get_or_create(**form.cleaned_data)
         
         if created:
             smart_status.save()
 
-        return redirect('s_status_list')
+        return redirect('smartphone_status_list')
 
 ############
-# BoxModel #
+# VivoboxModel #
 ############
 
-class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    model = BoxModel
+class VivoboxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = VivoboxModel
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/model_list.html'
     #Número de itens por página
@@ -603,7 +500,7 @@ class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.view_boxmodel'
+    permission_required = 'telecom.view_vivoboxmodel'
 
     #Envia a Query ordenada para o HTML
     def get_queryset(self):
@@ -614,21 +511,21 @@ class BoxModelList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_model/vivobox/'
+        context["url_delete"] = '/delete_object/vivobox_model/'
         return context
 
-class BoxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
-    model = BoxModel
+class VivoboxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = VivoboxModel
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/model_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormBoxModel
+    form_class = FormVivoboxModel
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.change_boxmodel'
+    permission_required = 'telecom.change_vivoboxmodel'
 
     def form_valid(self, form):
         box_model = self.get_object()
@@ -636,34 +533,34 @@ class BoxModelEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 
         box_model.save()
 
-        return redirect('v_model_list')
+        return redirect('vivobox_model_list')
 
-class BoxModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    model = BoxModel
+class VivoboxModelAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = VivoboxModel
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/model_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormBoxModel
+    form_class = FormVivoboxModel
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.add_boxmodel'
+    permission_required = 'telecom.add_vivoboxmodel'
 
     def form_valid(self, form):
-        box_model, created = BoxModel.objects.get_or_create(**form.cleaned_data)
+        box_model, created = VivoboxModel.objects.get_or_create(**form.cleaned_data)
         if created:
             box_model.save()
 
-        return redirect('v_model_list')
+        return redirect('vivobox_model_list')
 
 #############
-# BoxStatus #
+# VivoboxStatus #
 #############
 
-class BoxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    model = BoxStatus
+class VivoboxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
+    model = VivoboxStatus
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/status_list.html'
     #Número de itens por página
@@ -673,7 +570,7 @@ class BoxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.view_boxstatus'
+    permission_required = 'telecom.view_vivoboxstatus'
 
     #Envia a Query ordenada para o HTML
     def get_queryset(self):
@@ -684,21 +581,21 @@ class BoxStatusList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["url_delete"] = '/telecom/delete_status/vivobox/'
+        context["url_delete"] = '/delete_object/vivobox_status/'
         return context
 
-class BoxStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
-    model = BoxStatus
+class VivoboxStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    model = VivoboxStatus
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/status_edit.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormBoxStatus
+    form_class = FormVivoboxStatus
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.change_boxstatus'
+    permission_required = 'telecom.change_vivoboxstatus'
 
     def form_valid(self, form):
         box_status = self.get_object()
@@ -706,27 +603,27 @@ class BoxStatusEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
 
         box_status.save()
 
-        return redirect('v_status_list')
+        return redirect('vivobox_status_list')
 
-class BoxStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    model = BoxStatus
+class VivoboxStatusAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
+    model = VivoboxStatus
     #Caminho do arquivo html
     template_name = 'telecom/param/vivobox/status_add.html'
     #Nome da variável do Model no html
     context_object_name = 'object'
     #Formulário para editar a linha
-    form_class = FormBoxStatus
+    form_class = FormVivoboxStatus
     #Redireciona caso não estiver logado
     login_url = '/accounts/login/'
     #Permissão para acessar a página
-    permission_required = 'telecom.add_boxstatus'
+    permission_required = 'telecom.add_vivoboxstatus'
 
     def form_valid(self, form):
-        box_status, created = BoxStatus.objects.get_or_create(**form.cleaned_data)
+        box_status, created = VivoboxStatus.objects.get_or_create(**form.cleaned_data)
         if created:
             box_status.save()
 
-        return redirect('v_status_list')
+        return redirect('vivobox_status_list')
 
 ##########
 # Linhas #
@@ -762,7 +659,7 @@ class LineList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
         line_plan = LinePlan.objects.all()
         line_status = LineStatus.objects.all()
 
-        context["url_delete"] = '/telecom/delete_object/line/'
+        context["url_delete"] = '/delete_object/line/'
 
         context["qs_line_telecom"] = line_telecom
         context["qs_line_plan"] = line_plan
@@ -975,10 +872,10 @@ class SmartphoneList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        smartphone_model = SmartModel.objects.all()
-        smartphone_status = SmartStatus.objects.all()
+        smartphone_model = SmartphoneModel.objects.all()
+        smartphone_status = SmartphoneStatus.objects.all()
 
-        context["url_delete"] = '/telecom/delete_object/smartphone/'
+        context["url_delete"] = '/delete_object/smartphone/'
 
         context["qs_smartphone_status"] = smartphone_status
         context["qs_smartphone_model"] = smartphone_model
@@ -1013,13 +910,13 @@ class SmartphoneSearch(SmartphoneList):
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_model:
             qs = qs.filter(
-                Q(obj_model__exact=SmartModel.objects.get(name=filter_model))
+                Q(obj_model__exact=SmartphoneModel.objects.get(name=filter_model))
             )
    
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_status:
             qs = qs.filter(
-                Q(status__exact=SmartStatus.objects.get(name=filter_status))
+                Q(status__exact=SmartphoneStatus.objects.get(name=filter_status))
             )
 
         #Caso tenha filtro, adiciona na Query o filtro
@@ -1080,6 +977,7 @@ class SmartphoneEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         smartphone.name = form.cleaned_data['name']
         smartphone.branch = form.cleaned_data['branch']
         smartphone.status = form.cleaned_data['status']
+        smartphone.tracking_code = form.cleaned_data['tracking_code']
         smartphone.date_update = timezone.now()
 
         if self.request.POST.get('auth_attachment-clear') == 'on':
@@ -1193,10 +1091,10 @@ class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        vivobox_model = BoxModel.objects.all()
-        vivobox_status = BoxStatus.objects.all()
+        vivobox_model = VivoboxModel.objects.all()
+        vivobox_status = VivoboxStatus.objects.all()
 
-        context["url_delete"] = '/telecom/delete_object/vivobox/'
+        context["url_delete"] = '/delete_object/vivobox/'
 
         context["qs_vivobox_status"] = vivobox_status
         context["qs_vivobox_model"] = vivobox_model
@@ -1231,13 +1129,13 @@ class VivoBoxSearch(VivoBoxList):
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_model:
             qs = qs.filter(
-                Q(obj_model__exact=BoxModel.objects.get(name=filter_model))
+                Q(obj_model__exact=VivoboxModel.objects.get(name=filter_model))
             )
    
         #Caso tenha filtro, adiciona na Query o filtro
         if filter_status:
             qs = qs.filter(
-                Q(status__exact=BoxStatus.objects.get(name=filter_status))
+                Q(status__exact=VivoboxStatus.objects.get(name=filter_status))
             )
 
         #Caso tenha filtro, adiciona na Query o filtro
@@ -1295,6 +1193,7 @@ class VivoBoxEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         vivobox.name = form.cleaned_data['name']
         vivobox.branch = form.cleaned_data['branch']
         vivobox.status = form.cleaned_data['status']
+        vivobox.tracking_code = form.cleaned_data['tracking_code']
         vivobox.date_update = timezone.now()
 
         if self.request.POST.get('auth_attachment-clear') == 'on':

@@ -4,7 +4,7 @@
 
 
 {%block list_title%}Status de Smartphone {%endblock%}
-{%block url_add%}{% url 's_status_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'smartphone_status' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Status</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block url_edit%}{% url 's_status_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'smartphone_status' object.id %}{%endblock%}

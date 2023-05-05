@@ -4,31 +4,27 @@ from . import views
 urlpatterns = [
     path('generate_csv/<str:telecom_type>/<int:csv_simple>', views.generate_csv, name='generate_csv'),
 
-    path('delete_model/<str:telecom_type>/<int:model_id>', views.delete_model, name='delete_model'),
-    path('delete_status/<str:telecom_type>/<int:status_id>', views.delete_status, name='delete_status'),
-    path('delete_object/<str:telecom_type>/<int:id>', views.delete_object, name='delete_object'),
-
     #Modelo/Plano#
-    path('s_model_list/', views.SmartModelList.as_view(), name='s_model_list'),
-    path('s_model_edit/<int:pk>', views.SmartModelEdit.as_view(), name='s_model_edit'),
-    path('s_model_add/', views.SmartModelAdd.as_view(), name='s_model_add'),
+    path('smartphone_model_list/', views.SmartphoneModelList.as_view(), name='smartphone_model_list'),
+    path('smartphone_model_edit/<int:pk>', views.SmartphoneModelEdit.as_view(), name='smartphone_model_edit'),
+    path('smartphone_model_add/', views.SmartphoneModelAdd.as_view(), name='smartphone_model_add'),
 
-    path('v_model_list/', views.BoxModelList.as_view(), name='v_model_list'),
-    path('v_model_edit/<int:pk>', views.BoxModelEdit.as_view(), name='v_model_edit'),
-    path('v_model_add/', views.BoxModelAdd.as_view(), name='v_model_add'),
+    path('vivobox_model_list/', views.VivoboxModelList.as_view(), name='vivobox_model_list'),
+    path('vivobox_model_edit/<int:pk>', views.VivoboxModelEdit.as_view(), name='vivobox_model_edit'),
+    path('vivobox_model_add/', views.VivoboxModelAdd.as_view(), name='vivobox_model_add'),
 
     path('line_plan_list/', views.LinePlanList.as_view(), name='line_plan_list'),
     path('line_plan_edit/<int:pk>', views.LinePlanEdit.as_view(), name='line_plan_edit'),
     path('line_plan_add/', views.LinePlanAdd.as_view(), name='line_plan_add'),
 
     #Status#
-    path('s_status_list/', views.SmartStatusList.as_view(), name='s_status_list'),
-    path('s_status_edit/<int:pk>', views.SmartStatusEdit.as_view(), name='s_status_edit'),
-    path('s_status_add/', views.SmartStatusAdd.as_view(), name='s_status_add'),
+    path('smartphone_status_list/', views.SmartphoneStatusList.as_view(), name='smartphone_status_list'),
+    path('smartphone_status_edit/<int:pk>', views.SmartphoneStatusEdit.as_view(), name='smartphone_status_edit'),
+    path('smartphone_status_add/', views.SmartphoneStatusAdd.as_view(), name='smartphone_status_add'),
 
-    path('v_status_list/', views.BoxStatusList.as_view(), name='v_status_list'),
-    path('v_status_edit/<int:pk>', views.BoxStatusEdit.as_view(), name='v_status_edit'),
-    path('v_status_add/', views.BoxStatusAdd.as_view(), name='v_status_add'),
+    path('vivobox_status_list/', views.VivoboxStatusList.as_view(), name='vivobox_status_list'),
+    path('vivobox_status_edit/<int:pk>', views.VivoboxStatusEdit.as_view(), name='vivobox_status_edit'),
+    path('vivobox_status_add/', views.VivoboxStatusAdd.as_view(), name='vivobox_status_add'),
 
     path('line_status_list/', views.LineStatusList.as_view(), name='line_status_list'),
     path('line_status_edit/<int:pk>', views.LineStatusEdit.as_view(), name='line_status_edit'),

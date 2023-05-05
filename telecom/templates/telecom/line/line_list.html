@@ -6,11 +6,11 @@
 
 {% block url_gen_csv %}{% url 'generate_csv' 'line' '0' %}{% endblock %}
 {% block url_gen_simple_csv %}{% url 'generate_csv' 'line' '1' %}{% endblock %}
-{% block url_add %}{% url 'line_add' %}{% endblock %}
+{% block url_add %}{% url 'add_object' 'line' %}{% endblock %}
 {% block url_list %}{% url 'line_list' %}{% endblock %}
 {% block url_search %}{% url 'line_search' %}{% endblock %}
 
-{%block url_edit%}{% url 'line_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'line' object.id %}{%endblock%}
 {%block url_details%}{% url 'line_details' object.id %}{%endblock%}
 
 {% block filter_form %}

@@ -1,8 +1,8 @@
 from django.forms import ModelForm
 
 from .models import Line, Smartphone, VivoBox
-from .models import SmartModel, BoxModel, LinePlan
-from .models import LineStatus, LineStatusRFP, SmartStatus, BoxStatus
+from .models import SmartphoneModel, VivoboxModel, LinePlan
+from .models import LineStatus, LineStatusRFP, SmartphoneStatus, VivoboxStatus
 
 from branch.models import Branch
 
@@ -28,7 +28,7 @@ class FormLinePlan(ModelForm):
         model = LinePlan
         fields = ['name', 'plan_type']
 
-class FormSmartModel(ModelForm):
+class FormSmartphoneModel(ModelForm):
     #Validar e alterar os campos do formulário
     def clean(self):
         data = self.cleaned_data
@@ -43,10 +43,10 @@ class FormSmartModel(ModelForm):
     
     #Define os campos a serem alterados
     class Meta:
-        model = SmartModel
+        model = SmartphoneModel
         fields = ['name', 'date_release']
 
-class FormBoxModel(ModelForm):
+class FormVivoboxModel(ModelForm):
     #Validar e alterar os campos do formulário
     def clean(self):
         data = self.cleaned_data
@@ -61,7 +61,7 @@ class FormBoxModel(ModelForm):
     
     #Define os campos a serem alterados
     class Meta:
-        model = BoxModel
+        model = VivoboxModel
         fields = ['name']
 
 ##########
@@ -104,7 +104,7 @@ class FormLineStatusRFP(ModelForm):
         model = LineStatusRFP
         fields = ['name']
 
-class FormSmartStatus(ModelForm):
+class FormSmartphoneStatus(ModelForm):
     #Validar e alterar os campos do formulário
     def clean(self):
         data = self.cleaned_data
@@ -119,10 +119,10 @@ class FormSmartStatus(ModelForm):
     
     #Define os campos a serem alterados
     class Meta:
-        model = SmartStatus
+        model = SmartphoneStatus
         fields = ['name']
 
-class FormBoxStatus(ModelForm):
+class FormVivoboxStatus(ModelForm):
     #Validar e alterar os campos do formulário
     def clean(self):
         data = self.cleaned_data
@@ -137,7 +137,7 @@ class FormBoxStatus(ModelForm):
     
     #Define os campos a serem alterados
     class Meta:
-        model = BoxStatus
+        model = VivoboxStatus
         fields = ['name']
 
 #########
@@ -333,7 +333,7 @@ class FormSmartphone(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = Smartphone
-        fields = ['status', 'name', 'branch', 'number', 'auth_attachment']
+        fields = ['status', 'name', 'branch', 'number', 'tracking_code', 'auth_attachment']
 
 #Formulário para adicionar um novo smartphone
 class FormAddSmartphone(ModelForm):
@@ -452,7 +452,7 @@ class FormVivoBox(ModelForm):
     #Define os campos a serem alterados
     class Meta:
         model = VivoBox
-        fields = ['status', 'name', 'branch', 'number', 'auth_attachment']
+        fields = ['status', 'name', 'branch', 'number', 'tracking_code', 'auth_attachment']
 
 #Formulário para adicionar um novo VivoBox
 class FormAddVivoBox(ModelForm):

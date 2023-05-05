@@ -4,7 +4,7 @@
 
 
 {%block list_title%}Planos {%endblock%}
-{%block url_add%}{% url 'line_plan_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'line_plan' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Plano</label></th>
@@ -17,4 +17,4 @@
 <td>{{object.plan_type}}</td>
 {%endblock%}
 
-{%block url_edit%}{% url 'line_plan_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'line_plan' object.id %}{%endblock%}

@@ -32,6 +32,8 @@
     <dd>{% if vivobox.imei_1 %}{{vivobox.imei_1}}{% else %}-{% endif %}</dd>
     <dt>Nota Fiscal</dt>
     <dd>{% if vivobox.receipt %}{{vivobox.receipt}}{% else %}-{% endif %}</dd>
+    <dt>Código de Rastreio</dt>
+    <dd>{% if vivobox.tracking_code %}{{vivobox.tracking_code}}{% else %}-{% endif %}</dd>
 {%endblock%}
 
 {%block column4%}

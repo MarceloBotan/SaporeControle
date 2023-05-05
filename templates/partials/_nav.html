@@ -1,39 +1,5 @@
 {% load static %}
-<script>
-    $(document).ready(function () {
-        $('.navbar .dropdown-item').on('click', function (e) {
 
-        });
-
-
-        /*$('.navbar .dropdown-item').on('click', function (e) {
-            var $el = $(this).children('.dropdown-toggle');
-            var $parent = $el.offsetParent(".dropdown-menu");
-            $(this).parent("li").toggleClass('open');
-    
-            if (!$parent.parent().hasClass('navbar-nav')) {
-                if ($parent.hasClass('show')) {
-                    $parent.removeClass('show');
-                    $el.next().removeClass('show');
-                    $el.next().css({"top": -999, "left": -999});
-                } else {
-                    $parent.parent().find('.show').removeClass('show');
-                    $parent.addClass('show');
-                    $el.next().addClass('show');
-                    $el.next().css({"top": $el[0].offsetTop, "left": $parent.outerWidth() - 4});
-                }
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        });
-    
-        $('.navbar .dropdown').on('hidden.bs.dropdown', function () {
-            $(this).find('li.dropdown').removeClass('show open');
-            $(this).find('ul.dropdown-menu').removeClass('show open');
-        });*/
-    
-    });
-</script>
 <nav class="navbar navbar-expand-lg navbar-dark primary static-top" id="navBar">
     <div class="container-fluid">
         <a class="navbar-item col-1" aria-label="Home" href="{% url 'index' %}">
@@ -67,16 +33,16 @@
                             <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Smartphones</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 's_model_list' %}">Modelos</a></li>
-                                <li><a class="dropdown-item" href="{% url 's_status_list' %}">Status</a></li>
+                                <li><a class="dropdown-item" href="{% url 'smartphone_model_list' %}">Modelos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'smartphone_status_list' %}">Status</a></li>
                             </ul>
                         </li>
                         <li class="dropend">
                             <a class="dropdown-item dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
                                 Vivobox</a>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{% url 'v_model_list' %}">Modelos</a></li>
-                                <li><a class="dropdown-item" href="{% url 'v_status_list' %}">Status</a></li>
+                                <li><a class="dropdown-item" href="{% url 'vivobox_model_list' %}">Modelos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'vivobox_status_list' %}">Status</a></li>
                             </ul>
                         </li>
                     </ul>

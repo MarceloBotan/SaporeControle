@@ -1,0 +1,12 @@
+{% extends 'form.html' %}
+
+{% block title %}Editar Linha | Sapore{% endblock %}
+
+{%block back_url%}{% url 'branch_list' %}{%endblock%}
+{%block title_form%}Atualizar Filiais{%endblock%}
+
+{%block subtitle%}
+{%for file in files%}
+    <p>Última atualização - {{file.date_update}}</p>
+{%endfor%}
+{%endblock%}

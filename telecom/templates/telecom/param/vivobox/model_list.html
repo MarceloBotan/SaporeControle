@@ -4,7 +4,7 @@
 
 
 {%block list_title%}Modelos de Vivobox {%endblock%}
-{%block url_add%}{% url 'v_model_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'vivobox_model' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Modelo</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block url_edit%}{% url 'v_model_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'vivobox_model' object.id %}{%endblock%}

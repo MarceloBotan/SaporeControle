@@ -1,40 +1,23 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <title>Acesso Negado | Sapore</title>
+{% extends 'base.html' %}
 
-    {% include 'partials/_head.html' %}
-
-</head>
-<body>
-    {% include 'partials/_nav.html' %}
-
-    <div class="container">
-        <div class="row justify-content-md-center mt-5">
-            <div class="col-md-auto mt-5">
-                <h2 style="text-align: center;"><strong>Acesso Negado</strong></h2>
-            </div>
-        </div>
-        <div class="row justify-content-md-center mt-4">
-            <div class="col-md-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
-                </svg>
-            </div>
-        </div>
-        <div class="row justify-content-md-center mt-5">
-            <div class="col-md-auto mt-5">
-                <p style="text-align: center;color: red;">Seu usuário não possui permissão para acessar essa página</p>
-                <small style="text-align: center;">Caso precise utilizar essa página, solicite a permissão para o administrador do sistema</small>
-            </div>
-        </div>
+{%block content%}
+<div class="row justify-content-md-center mt-5">
+    <div class="col-md-auto mt-5">
+        <h2 style="text-align: center;"><strong>Acesso Negado</strong></h2>
     </div>
-
-    {% include 'partials/_footer.html' %}
-
-    <script src="{% static 'vendor/jquery/jquery.slim.min.js' %}"></script>
-    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+</div>
+<div class="row justify-content-md-center mt-4">
+    <div class="col-md-auto">
+        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
+    </div>
+</div>
+<div class="row justify-content-md-center mt-5">
+    <div class="col-md-auto mt-5">
+        <p style="text-align: center;color: red;">Seu usuário não possui permissão para acessar essa página</p>
+        <small style="text-align: center;">Caso precise utilizar essa página, solicite a permissão para o administrador do sistema</small>
+    </div>
+</div>
+{%endblock%}

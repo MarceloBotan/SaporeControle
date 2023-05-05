@@ -4,7 +4,7 @@
 
 
 {%block list_title%}Modelos de Smartphone {%endblock%}
-{%block url_add%}{% url 's_model_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'smartphone_model' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Modelo</label></th>
@@ -17,4 +17,4 @@
 <td>{{object.date_release}}</td>
 {%endblock%}
 
-{%block url_edit%}{% url 's_model_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'smartphone_model' object.id %}{%endblock%}

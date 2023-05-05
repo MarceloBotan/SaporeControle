@@ -6,11 +6,11 @@
 
 {% block url_gen_csv %}{% url 'generate_csv' 'vivobox' '0' %}{% endblock %}
 {% block url_gen_simple_csv %}{% url 'generate_csv' 'vivobox' '1' %}{% endblock %}
-{% block url_add %}{% url 'vivobox_add' %}{% endblock %}
+{% block url_add %}{% url 'add_object' 'vivobox' %}{% endblock %}
 {% block url_list %}{% url 'vivobox_list' %}{% endblock %}
 {% block url_search %}{% url 'vivobox_search' %}{% endblock %}
 
-{%block url_edit%}{% url 'vivobox_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'vivobox' object.id %}{%endblock%}
 {%block url_details%}{% url 'vivobox_details' object.id %}{%endblock%}
 
 {% block filter_form %}

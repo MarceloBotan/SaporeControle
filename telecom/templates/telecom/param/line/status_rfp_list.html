@@ -4,7 +4,7 @@
 
 
 {%block list_title%}Status RFP {%endblock%}
-{%block url_add%}{% url 'line_status_rfp_add' %}{%endblock%}
+{%block url_add%}{% url 'add_object' 'line_status_rfp' %}{%endblock%}
 
 {%block list_th%}
 <th><label scope="col">Status RFP</label></th>
@@ -15,4 +15,4 @@
 <td>{{object.name}}</td>
 {%endblock%}
 
-{%block url_edit%}{% url 'line_status_rfp_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'line_status_rfp' object.id %}{%endblock%}

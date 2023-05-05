@@ -32,6 +32,8 @@
     <dd>{% if smartphone.imei_1 %}{{smartphone.imei_1}}{% else %}-{% endif %}</dd>
     <dt>Nota Fiscal</dt>
     <dd>{% if smartphone.receipt %}{{smartphone.receipt}}{% else %}-{% endif %}</dd>
+    <dt>Código de Rastreio</dt>
+    <dd>{% if smartphone.tracking_code %}{{smartphone.tracking_code}}{% else %}-{% endif %}</dd>
 {%endblock%}
 
 {%block column4%}

@@ -6,11 +6,11 @@
 
 {% block url_gen_csv %}{% url 'generate_csv' 'smartphone' '0' %}{% endblock %}
 {% block url_gen_simple_csv %}{% url 'generate_csv' 'smartphone' '1' %}{% endblock %}
-{% block url_add %}{% url 'smartphone_add' %}{% endblock %}
+{% block url_add %}{% url 'add_object' 'smartphone' %}{% endblock %}
 {% block url_list %}{% url 'smartphone_list' %}{% endblock %}
 {% block url_search %}{% url 'smartphone_search' %}{% endblock %}
 
-{%block url_edit%}{% url 'smartphone_edit' object.id %}{%endblock%}
+{%block url_edit%}{% url 'edit_object' 'smartphone' object.id %}{%endblock%}
 {%block url_details%}{% url 'smartphone_details' object.id %}{%endblock%}
 
 {% block filter_form %}

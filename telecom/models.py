@@ -90,22 +90,24 @@ class Smartphone(models.Model):
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='smartphone_docs/%Y/%m', verbose_name='Autorização')
 
+    tracking_code = models.CharField(max_length=13, default='-', verbose_name='Código de Rastreio')
+
     line_id = models.BigIntegerField(default=0)
 
-    obj_model = models.ForeignKey('SmartModel', on_delete=models.DO_NOTHING, verbose_name='Modelo')
-    status = models.ForeignKey('SmartStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
+    obj_model = models.ForeignKey('SmartphoneModel', on_delete=models.DO_NOTHING, verbose_name='Modelo')
+    status = models.ForeignKey('SmartphoneStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
 
     def __str__(self):
         return str(self.imei_1)
 
-class SmartModel(models.Model):
+class SmartphoneModel(models.Model):
     name = models.CharField(max_length=31, verbose_name='Modelo')
     date_release = models.DateField(default=timezone.now, verbose_name='Data de Lançamento')
 
     def __str__(self):
         return self.name
 
-class SmartStatus(models.Model):
+class SmartphoneStatus(models.Model):
     name = models.CharField(max_length=31, verbose_name='Status')
 
     def __str__(self):
@@ -121,21 +123,23 @@ class VivoBox(models.Model):
     branch_closed = models.BooleanField(default=False)
     auth_attachment = models.FileField(blank=True, upload_to='vivobox_docs/%Y/%m', verbose_name='Autorização')
 
+    tracking_code = models.CharField(max_length=13, default='-', verbose_name='Código de Rastreio')
+
     line_id = models.BigIntegerField(default=0)
     
-    obj_model = models.ForeignKey('BoxModel', on_delete=models.DO_NOTHING, verbose_name='Modelo')
-    status = models.ForeignKey('BoxStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
+    obj_model = models.ForeignKey('VivoboxModel', on_delete=models.DO_NOTHING, verbose_name='Modelo')
+    status = models.ForeignKey('VivoboxStatus', on_delete=models.DO_NOTHING, verbose_name='Status')
 
     def __str__(self):
         return str(self.imei_1)
 
-class BoxModel(models.Model):
+class VivoboxModel(models.Model):
     name = models.CharField(max_length=31, verbose_name='Modelo')
 
     def __str__(self):
         return self.name
 
-class BoxStatus(models.Model):
+class VivoboxStatus(models.Model):
     name = models.CharField(max_length=31, verbose_name='Status')
 
     def __str__(self):
