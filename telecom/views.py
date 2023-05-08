@@ -82,7 +82,7 @@ def generate_csv(request, telecom_type, csv_simple):
             header = ([header] for header in smartphone_headers)
             rows = ([str(smartphone.obj_model),str(smartphone.imei_1), str(smartphone.imei_2),  str(smartphone.receipt), 
                         str(smartphone.name), str(smartphone.branch), str(smartphone.number), str(smartphone.status), 
-                        str(smartphone.date_update)] for smartphone in smartphones)
+                        str(smartphone.date_update), str(smartphone.tracking_code)] for smartphone in smartphones)
     elif telecom_type == 'vivobox':
         prefix = 'vivobox_'
         if csv_simple == 1:
@@ -94,7 +94,7 @@ def generate_csv(request, telecom_type, csv_simple):
             header = ([header] for header in vivobox_headers)
             rows = ([str(vivobox.obj_model),str(vivobox.imei_1),  str(vivobox.receipt), str(vivobox.name), 
                         str(vivobox.branch), str(vivobox.number), str(vivobox.status), 
-                        str(vivobox.date_update)] for vivobox in vivoboxs)
+                        str(vivobox.date_update), str(vivobox.tracking_code)] for vivobox in vivoboxs)
 
     result = chain(header, rows)
 
