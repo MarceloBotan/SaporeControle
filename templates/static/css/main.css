@@ -1,5 +1,8 @@
 *{
     font-family:'Aileron';
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 @font-face {
@@ -16,6 +19,10 @@
     --shadow-light: rgba(46, 42, 37, 0.2);
     --shadow: rgba(46, 42, 37, 0.5);
     --shadow-dark: rgba(46, 42, 37, 0.8);
+}
+
+body {
+    background-color: rgba(46, 42, 37, 0.1);
 }
 
 #loadingDiv {
