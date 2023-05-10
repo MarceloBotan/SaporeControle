@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from .models import Line, Smartphone, VivoBox
+from .models import Line, Smartphone, Vivobox
 from .models import SmartphoneModel, VivoboxModel, LinePlan
 from .models import LineStatus, LineStatusRFP, SmartphoneStatus, VivoboxStatus
 
@@ -451,7 +451,7 @@ class FormVivoBox(ModelForm):
     
     #Define os campos a serem alterados
     class Meta:
-        model = VivoBox
+        model = Vivobox
         fields = ['status', 'name', 'branch', 'number', 'tracking_code', 'auth_attachment']
 
 #Formulário para adicionar um novo VivoBox
@@ -479,7 +479,7 @@ class FormAddVivoBox(ModelForm):
         
         #Procura se smartphone já existe
         try:
-            VivoBox.objects.get(imei_1=imei_1)
+            Vivobox.objects.get(imei_1=imei_1)
             self.add_error(
                 'imei_1',
                 'VivoBox já registrado'
@@ -489,6 +489,6 @@ class FormAddVivoBox(ModelForm):
 
     #Define os campos a serem alterados
     class Meta:
-        model = VivoBox
+        model = Vivobox
         fields = ['obj_model', 'imei_1', 'receipt', 'status', 'name', 'branch', 'number', 'auth_attachment']
 

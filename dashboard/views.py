@@ -8,7 +8,7 @@ from django.db import connection
 from django.core.exceptions import PermissionDenied
 
 from django.db.models import Q
-from telecom.models import Line, Smartphone, VivoBox
+from telecom.models import Line, Smartphone, Vivobox
 from telecom.models import SmartphoneModel, VivoboxModel, LinePlan
 from telecom.models import LineStatus, LineStatusRFP, SmartphoneStatus, VivoboxStatus
 
@@ -100,7 +100,7 @@ def get_object(_type, _id):
         elif 'status' in _type:
             object = VivoboxStatus.objects.get(id=_id)
         else:
-            object = VivoBox.objects.get(id=_id)
+            object = Vivobox.objects.get(id=_id)
     elif 'chart' in _type:
         object = Chart.objects.get(id=_id)
     return object

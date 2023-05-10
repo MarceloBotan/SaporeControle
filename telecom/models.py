@@ -113,7 +113,7 @@ class SmartphoneStatus(models.Model):
     def __str__(self):
         return self.name
 
-class VivoBox(models.Model):
+class Vivobox(models.Model):
     name = models.CharField(max_length=255, default='-', verbose_name='Nome')
     branch = models.IntegerField(default=0, verbose_name='Filial')
     number = models.BigIntegerField(default=0, verbose_name='Número')

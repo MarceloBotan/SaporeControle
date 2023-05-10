@@ -18,7 +18,7 @@ from .forms import FormLineStatus, FormLineStatusRFP, FormSmartphoneStatus, Form
 from django.core.exceptions import PermissionDenied
 
 from django.db.models import Q, Count
-from .models import Line, Smartphone, VivoBox
+from .models import Line, Smartphone, Vivobox
 from .models import SmartphoneModel, VivoboxModel, LinePlan
 from .models import LineStatus, LineStatusRFP, SmartphoneStatus, VivoboxStatus, LineTelecom
 
@@ -40,7 +40,7 @@ def generate_csv(request, telecom_type, csv_simple):
     
     lines = Line.objects.all()
     smartphones = Smartphone.objects.all()
-    vivoboxs = VivoBox.objects.all()
+    vivoboxs = Vivobox.objects.all()
 
     header = ''
 
@@ -797,7 +797,7 @@ class LineEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
             smartphone.save()
         except:
             try:
-                vivobox = VivoBox.objects.get(number=line.number)
+                vivobox = Vivobox.objects.get(number=line.number)
                 vivobox.name = line.name
                 vivobox.branch = line.branch
                 vivobox.date_update = timezone.now()
@@ -1066,7 +1066,7 @@ class SmartphoneAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
 ##############
 
 class VivoBoxList(PermissionRequiredMixin, LoginRequiredMixin, ListView):
-    model = VivoBox
+    model = Vivobox
     #Caminho do arquivo html
     template_name = 'telecom/vivobox/vivobox_list.html'
     #Número de itens por página
@@ -1155,7 +1155,7 @@ class VivoBoxSearch(VivoBoxList):
         return qs
 
 class VivoBoxDetails(LoginRequiredMixin, ListView):
-    model = VivoBox
+    model = Vivobox
     #Caminho do arquivo html
     template_name = 'telecom/vivobox/vivobox_details.html'
     #Nome da variável do Model no html
@@ -1176,7 +1176,7 @@ class VivoBoxDetails(LoginRequiredMixin, ListView):
         return qs
 
 class VivoBoxEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
-    model = VivoBox
+    model = Vivobox
     #Caminho do arquivo html
     template_name = 'telecom/vivobox/vivobox_edit.html'
     #Nome da variável do Model no html
@@ -1236,7 +1236,7 @@ class VivoBoxEdit(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
         return redirect('vivobox_details', pk=vivobox.id)
 
 class VivoBoxAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
-    model = VivoBox
+    model = Vivobox
     #Caminho do arquivo html
     template_name = 'telecom/vivobox/vivobox_add.html'
     #Nome da variável do Model no html
@@ -1251,7 +1251,7 @@ class VivoBoxAdd(PermissionRequiredMixin, LoginRequiredMixin, CreateView):
     permission_required = 'telecom.add_vivobox'
 
     def form_valid(self, form):
-        vivobox = VivoBox(**form.cleaned_data)
+        vivobox = Vivobox(**form.cleaned_data)
 
         #Verifica se possui linha e altera as informações
         try:
