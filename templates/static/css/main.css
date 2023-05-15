@@ -7,8 +7,16 @@
 
 @font-face {
     font-family: 'Aileron';
+    font-weight: normal;
     font-style: normal;
     src: local('Aileron'), url('/static/fonts/Aileron-Regular.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Aileron';
+    font-weight: bold;
+    font-style: normal;
+    src: local('Aileron'), url('/static/fonts/Aileron-Bold.otf') format('opentype');
 }
 
 :root {
