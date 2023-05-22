@@ -16,45 +16,38 @@ View a list of all assets, including their detailed information.
 #Installation
 
 Clone this repository to your local machine:
-
-``
-Copy code
+```bash
 git clone https://github.com/your-username/SaporeControle.git
+```
+
 Navigate to the project directory:
-``
-
-``
-Copy code
+```bash
 cd SaporeControle
-Create a virtual environment to isolate dependencies:
-``
+```
 
-``
-Copy code
+Create a virtual environment to isolate dependencies:
+```bash
 python -m venv env
+```
+
 Activate the virtual environment:
-``
 
 On Linux/macOS:
-``
-Copy code
+```bash
 source env/bin/activate
-``
+```
 
 On Windows (PowerShell):
-``
-Copy code
+```bash
 .\env\Scripts\Activate.ps1
-``
+```
 
 Install the project dependencies:
-``
-Copy code
+```bash
 pip install -r requirements.txt
-``
+```
 
 Run the database migrations:
-``
-Copy code
+```bash
 python manage.py migrate
-``
+```
