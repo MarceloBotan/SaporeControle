@@ -6,7 +6,7 @@
 
 SaporeControle is a Python application built with the Django framework to manage the inventory of assets in a company. It provides a web interface for asset management and includes features to add, edit, and delete SQL charts.
 
-##Features
+## Features
 
 ![image](https://github.com/MarceloBotan/SaporeControle/assets/128054032/df1a2615-65b8-4037-93a2-5f3614bd77de)
 
@@ -15,7 +15,7 @@ Update the information of an existing asset.
 Remove an asset from the system.
 View a list of all assets, including their detailed information.
 
-##Installation
+## Installation
 
 Clone this repository to your local machine:
 ```bash
