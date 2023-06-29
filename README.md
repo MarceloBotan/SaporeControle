@@ -1,5 +1,7 @@
 # SaporeControle
 
+[![Django CI](https://github.com/MarceloBotan/SaporeControle/actions/workflows/django.yml/badge.svg)](https://github.com/MarceloBotan/SaporeControle/actions/workflows/django.yml)
+
 ![image](https://github.com/MarceloBotan/SaporeControle/assets/128054032/410ef42f-94a1-4bbc-98fa-e44882f1f8c9)
 
 SaporeControle is a Python application built with the Django framework to manage the inventory of assets in a company. It provides a web interface for asset management and includes features to add, edit, and delete SQL charts.
